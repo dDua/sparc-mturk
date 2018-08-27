@@ -882,7 +882,7 @@ function populate_passage(config) {
         } else {
             record_count = record_count - 1;
         }
-        document.getElementsByClassName("passage_num")[0].innerText = (record_count) + "/" + passages.length
+        document.getElementsByClassName("passage_num")[0].innerText = "Passage " + (record_count) + "/" + passages.length
         var new_passage = document.createElement("div");
         new_passage.innerText = passages[record_count - 1];
         new_passage.className = "passage-" + record_count;

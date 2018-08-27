@@ -11,16 +11,27 @@
     <form name='mturk_form' method='post' id='mturk_form' action='https://www.mturk.com/mturk/externalSubmit'>
         <input type='hidden' value='' name='assignmentId' id='assignmentId' />
         <div id="root">
-            <h2>Complex question answering with high-Level reasoning and inference</h2>
-            <div>
-                <p> This task involves creating questions and answers from a given passage that involve some kind of complex reasoning.  The answer to the question can be words from the passage, dates, or numbers.  The most important point is that the questions require looking at more than one part of the passage to answer.  We will make sure that the questions are sufficiently complex by running a simple question answering system on your question; if the system gets the answer right, the question is too easy.  The more you create challenging questions, the more you earn. </p>
-            </div>
-            <div align="left">
-                <h4><b>Some example question and answers are demonstrated below</b> 
-                    <a href="collapse" onclick="return collapse();" id="collapse_link">(Click to collapse)</a> 
-                </h4>
-            </div>
+            <h2>Complex question answering with high-level reasoning and inference</h2>
+            <a href="collapse" onclick="return collapse();" id="collapse_link">(Click to collapse)</a> 
             <div class="annotated">
+                <div>
+                    <p>
+                        This task involves creating questions and answers from a given passage that involve some kind of complex reasoning.
+                        The answer to the question can be words from the passage, dates, or numbers.  The most important point is that the
+                        questions require looking at more than one part of the passage to answer.  We will make sure that the questions are
+                        sufficiently complex by running a simple question answering system on your question; if the system gets the answer
+                        right, the question is too easy.  The more you create challenging questions, the more you earn.
+                    </p>
+                    <p>
+                        Below, we provide some example questions that involve different kinds of reasoning.  Try to use a variety of
+                        reasoning types in the questions you come up with, and also have a variety of answer types (spans, numbers, dates).
+                    </p>
+                </div>
+                <div align="left">
+                    <h4><b>Example questions</b> 
+                    </h4>
+                    <p style="text-align:center">Move your mouse over a question to highlight the part of the passage that answers the question.</p>
+                </div>
                 <div class="left_panel">
                     <h2>Passage</h2>
                     <div class="passage-sample">
@@ -55,56 +66,52 @@
                         <h3>Addition or Subtraction</h3>
                         <div class="query" onmouseover="highlight_q1();" onmouseout="reset_higlight();">
                             Question : How long did take for Austria-Hungary to annex Bosnia and Herzegovina? <br />
-                            Answer : 31 years <br />
+                            Answer : 31 years (number)<br />
                         </div>
                         <div class="query" onmouseover="highlight_q2();" onmouseout="reset_higlight();">
                             Question : When did the Second Balkan war end? <br />
-                            Answer : 19 July 1913 <br />
+                            Answer : 19 July 1913 (date)<br />
                         </div>
                         <div class="query" onmouseover="highlight_q3();" onmouseout="reset_higlight();">
                             Question : How long did the Bosnian Crisis last? <br />
-                            Answer : 1 year <br />
+                            Answer : 1 year (number)<br />
                         </div>
                         <hr>
                         <h3>Set Overlap or Joins</h3>
                         <div class="query" onmouseover="highlight_q4();" onmouseout="reset_higlight();">
-                            Question : In which year did the two wars, First Balkan war and Bulgarian attack on Serbias and Greece overlap? <br />
-                            Answer : 1913
+                            Question : In which year did the First Balkan war and the Bulgarian attack on Serbia and Greece overlap? <br />
+                            Answer : 1913 (date)
                         </div>
                         <div class="query" onmouseover="highlight_q5();" onmouseout="reset_higlight();">
                             Question : Which two wars were ongoing in 1913? <br />
-                            Answer : First Balkan war and Bulgarian attack on Serbia and Greece
+                            Answer : "First Balkan war", "Second Balkan War" (two separate spans)
+                        </div>
+                        <div class="query" onmouseover="highlight_q9();" onmouseout="reset_higlight();">
+                            Question : Which country started the Second Balkan War? <br />
+                            Answer : Bulgaria (span)
                         </div>
                         <hr>
                         <h3>Comparison</h3>
                         <div class="query" onmouseover="highlight_q6();" onmouseout="reset_higlight();">
-                            Question : Did the Bosnian crisis happen before the Second Balkan War? <br />
-                            Answer : Yes
+                            Question : Which happened first, the Bosnian crisis or the First Balkan War? <br />
+                            Answer : Bosnian crisis (span)
                         </div>
                         <hr>
-                        <h3>Count</h3>
+                        <h3>Counting</h3>
                         <div class="query" onmouseover="highlight_q7();" onmouseout="reset_higlight();">
-                            Question : How many countries were enlarged as a part of Treaty of London? <br />
-                            Answer : 4 <br />
+                            Question : How many countries were enlarged as a part of the Treaty of London? <br />
+                            Answer : 4 (number)<br />
                         </div>
                         <hr>
-                        <h3>Find minimum or maximum</h3>
+                        <h3>Finding minimum or maximum</h3>
                         <div class="query" onmouseover="highlight_q8();" onmouseout="reset_higlight();">
                             Question : Which was the first war to have happened? <br />
-                            Answer : Bosnian Crisis
-                        </div>
-                        <div class="query" onmouseover="highlight_q9();" onmouseout="reset_higlight();">
-                            Question : Which country started the Second Balkan War? <br />
-                            Answer : Bulgaria
+                            Answer : Bosnian Crisis (span)
                         </div>
                         <hr>
                     </div>
-
                 </div>
-            </div>
-
-            <div class="main-container">
-                <h2 id="Q1">Lets start writing some question-answers now!</h2>
+                <h2 id="Q1">Lets start writing some questions now!</h2>
                 <h4> <b>The Rules of the task are as follows : </b></h4>
                 <ol>
                     <li> Given a passage, you need to create questions that can be answered from the passage. </li>
@@ -114,6 +121,9 @@
                     <li> The answers will be cross-checked and the HIT will be rejected if a lot of anwers are incorrect. So, please be honest and help us in our research.</li>
                     <li> Please create at least 10 question in the entire hit </li>
                 </ol>
+            </div>
+
+            <div class="main-container">
                 <br />
                 <div class="passage_num">
                 </div>
