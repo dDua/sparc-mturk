@@ -1,0 +1,228 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Smart Question Answering</title>
+    <link href="main.css" rel="stylesheet" />
+    <script src="main.js"></script>
+
+</head>
+<body onload="populate_passage('next');">
+    <form name='mturk_form' method='post' id='mturk_form' action='https://www.mturk.com/mturk/externalSubmit'>
+        <input type='hidden' value='' name='assignmentId' id='assignmentId' />
+        <div id="root">
+            <h2>Complex question answering with high-Level reasoning and inference</h2>
+            <div>
+                <p> This task involves creating questions and answers from a given passage that involve some kind of complex reasoning.  The answer to the question can be words from the passage, dates, or numbers.  The most important point is that the questions require looking at more than one part of the passage to answer.  We will make sure that the questions are sufficiently complex by running a simple question answering system on your question; if the system gets the answer right, the question is too easy.  The more you create challenging questions, the more you earn. </p>
+            </div>
+            <div align="left">
+                <h4><b>Some example question and answers are demonstrated below</b> 
+                    <a href="collapse" onclick="return collapse();" id="collapse_link">(Click to collapse)</a> 
+                </h4>
+            </div>
+            <div class="annotated">
+                <div class="left_panel">
+                    <h2>Passage</h2>
+                    <div class="passage-sample">
+                        Austria-Hungary precipitated the <span class="ans_span1">Bosnian crisis of 1908-1909</span>
+                        by <span class="ans_span8">officially annexing the former Ottoman territory of Bosnia and Herzegovina</span>, which it had
+                        occupied since <span class="ans_span3">1878 </span>. This <span class="ans_span9">
+                            angered the Kingdom of Serbia and
+                            its patron, the Pan-Slavic and Orthodox Russian Empire
+                        </span>. Russian political manoeuvring in the
+                        region destabilised peace accords that were already fracturing in the Balkans, which came to
+                        be known as the "powder keg of Europe." In <span class="ans_span4">
+                            1912 and 1913,
+                            the First Balkan War
+                        </span> was fought between the Balkan League and the fracturing Ottoman Empire.
+                        The resulting Treaty of London further shrank the Ottoman Empire, creating an independent Albanian state while enlarging the
+                        territorial holdings of <span class="ans_span6">Bulgaria, Serbia, Montenegro, and Greece </span>. When <span class="ans_span2">
+                            Bulgaria attacked Serbia
+                            and Greece on 16 June 1913
+                        </span>, it <span class="ans_span10">
+                            lost most of Macedonia to Serbia
+                            and Greece
+                        </span>, and Southern Dobruja to Romania in the <span class="ans_span5">
+                            33-day
+                            Second Balkan War
+                        </span> , further destabilising the region. The Great Powers were able to keep these
+                        Balkan conflicts contained, but the next one would spread throughout Europe and beyond.
+                    </div>
+                </div>
+
+                <div class="right_panel_sample">
+                    <div class="tab qapairs">
+                        <h3>Addition or Subtraction</h3>
+                        <div class="query" onmouseover="highlight_q1();" onmouseout="reset_higlight();">
+                            Question : How long did take for Austria-Hungary to annex Bosnia and Herzegovina? <br />
+                            Answer : 31 years <br />
+                        </div>
+                        <div class="query" onmouseover="highlight_q2();" onmouseout="reset_higlight();">
+                            Question : When did the Second Balkan war end? <br />
+                            Answer : 19 July 1913 <br />
+                        </div>
+                        <div class="query" onmouseover="highlight_q3();" onmouseout="reset_higlight();">
+                            Question : How long did the Bosnian Crisis last? <br />
+                            Answer : 1 year <br />
+                        </div>
+                        <hr>
+                        <h3>Set Overlap or Joins</h3>
+                        <div class="query" onmouseover="highlight_q4();" onmouseout="reset_higlight();">
+                            Question : In which year did the two wars, First Balkan war and Bulgarian attack on Serbias and Greece overlap? <br />
+                            Answer : 1913
+                        </div>
+                        <div class="query" onmouseover="highlight_q5();" onmouseout="reset_higlight();">
+                            Question : Which two wars were ongoing in 1913? <br />
+                            Answer : First Balkan war and Bulgarian attack on Serbia and Greece
+                        </div>
+                        <hr>
+                        <h3>Comparison</h3>
+                        <div class="query" onmouseover="highlight_q6();" onmouseout="reset_higlight();">
+                            Question : Did the Bosnian crisis happen before the Second Balkan War? <br />
+                            Answer : Yes
+                        </div>
+                        <hr>
+                        <h3>Count</h3>
+                        <div class="query" onmouseover="highlight_q7();" onmouseout="reset_higlight();">
+                            Question : How many countries were enlarged as a part of Treaty of London? <br />
+                            Answer : 4 <br />
+                        </div>
+                        <hr>
+                        <h3>Find minimum or maximum</h3>
+                        <div class="query" onmouseover="highlight_q8();" onmouseout="reset_higlight();">
+                            Question : Which was the first war to have happened? <br />
+                            Answer : Bosnian Crisis
+                        </div>
+                        <div class="query" onmouseover="highlight_q9();" onmouseout="reset_higlight();">
+                            Question : Which country started the Second Balkan War? <br />
+                            Answer : Bulgaria
+                        </div>
+                        <hr>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="main-container">
+                <h2 id="Q1">Lets start writing some question-answers now!</h2>
+                <h4> <b>The Rules of the task are as follows : </b></h4>
+                <ol>
+                    <li> Given a passage, you need to create questions that can be answered from the passage. </li>
+                    <li> Once you create the question, you need to write its answer, either in the form of a date, a number or spans copied directly from the passage.</li>
+                    <li> There is an AI running in the background which will also try to answer the question.</li>
+                    <li> You won't be able to submit the question if the AI gives the same reponse. </li>
+                    <li> The answers will be cross-checked and the HIT will be rejected if a lot of anwers are incorrect. So, please be honest and help us in our research.</li>
+                    <li> Please create at least 10 question in the entire hit </li>
+                </ol>
+                <br />
+                <div class="passage_num">
+                </div>
+                <br />
+                <div class="panel">
+                    <div class="left_panel">
+                        <div class="passage">
+                            <h2>Passage</h2>
+                          
+                            <div class="passage-0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="right_panel">
+                        <h2>Type a question based on the passage below</h2>
+                        <div class="question" align="center">
+                           
+                        </div>
+                        <div id="wrapper-outer">
+                            <div id="wrapper">
+                                <div id="leftcolumn">
+                                    <div class="answer" align="center">
+                                        <h4>Your Answer</h4>
+                                        <table id="ans_table">
+                                            <tr id="span_row">
+                                                <td>
+                                                    <input type="radio" name="answer" id="span" value='span' onchange="return add_span();">Select span
+                                                </td>
+                                            </tr>
+
+                                            <tr id="date_row">
+                                                <td>
+                                                    <input type="radio" name="answer" id="date" value='date' onchange="create_input_date();">Date
+                                                </td>
+                                            </tr>
+                                            <tr id="date_row_1" style="display:none">
+                                                <td align="center">Year</td>
+                                                <td align="center">Month</td>
+                                                <td align="center">Date</td>
+                                            </tr>
+
+                                            <tr id="digit_row">
+                                                <td>
+                                                    <input type="radio" id="digit" name="answer" value="digit" onchange="create_input_digit();">Number
+                                                </td>
+                                            </tr>
+                                            <tr id="digit_row_1" style="display:none">
+                                                <td align="center">Value</td>
+                                                <td align="center">Unit</td>
+                                            </tr>
+
+                                            <tr id="yes_no_row">
+                                                
+                                                <td>
+                                                    <input type="radio" id="yes_no" name="answer" onchange="create_yes_no();">Yes/No
+                                                </td>
+                                            </tr>
+                                            <tr id="yes_no_row_1" style="display:none">
+                                                <td width="30%"></td>
+                                                
+                                            <tr id="yes_no_row_2" style="display:none">
+                                                <td width="30%"></td>
+                                               
+                                            </tr>
+                                        </table>
+                                    </div>
+
+                                </div>
+                                <div id="rightcolumn">
+                                    <h4>AI predicted the answer below <br />(wait for answer to appear below)</h4>
+                                    <div class="ai_answer" align="center">
+                                        <span id="ai-answer" ></span>
+                                    </div>
+                                    <div class="wait_loop">
+                                        
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="horizontal-scroll-wrapper">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="error_panel">
+
+                </div>
+                <div class="bottom_panel">
+                    <button id="prev_passage" type="button" class="btn" onclick="populate_passage('previous');">
+                        Previous Passage
+                    </button>
+         
+                    <button id="next_question" type="button" class="btn-submit" onclick="create_question();">
+                            Submit Question
+                    </button>
+                    <button id="next_passage" type="button" class="btn" onclick="populate_passage('next');">
+                        Next Passage
+                    </button>
+                </div>
+            </div>
+          </div>
+           
+          <p align="right"><input type='submit' id='submitButton' value='Submit HIT' style="display:none;height:50px;width:100px;"/></p>
+        </form>
+        <script language='Javascript'>turkSetAssignmentID();</script>
+    </body>
+
+    </html>
