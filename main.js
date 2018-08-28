@@ -1,5 +1,5 @@
 ﻿var record_count = 0;
-//var span_count = 2;
+var total_question_cnt = 0;
 var question_num = 0
 var passages = getContents().split("\n");
 var hasMarks = false
@@ -42,7 +42,7 @@ function initialize_answer() {
         clearTimeout(timeout);
 
         timeout = setTimeout(function () {
-            invoke_bidaf();
+            invoke_bidaf_with_retries(3);
         }, 800);
     };
 }
@@ -139,6 +139,7 @@ function modify_previous_question() {
     deselect_date()
     deselect_span()
     deselect_digit()
+    deselect_bool()
 
     var question_el = document.getElementById('input-question-' + this.id)
     question_el.style.display = "";
@@ -153,7 +154,23 @@ function modify_previous_question() {
         document.getElementById("digit").checked = true
         document.getElementById("digit_row_1").style.display = ""
         document.getElementById("digit-" + this.id).style.display = ""
-
+    } else if (document.getElementById("no_" + this.id) && document.getElementById("yes_" + this.id).checked) {
+        var yes_no_ind = document.getElementById("yes_no_row").rowIndex
+        var ans_table = document.getElementById("ans_table");
+        var yes_row = ans_table.rows[yes_no_ind + 1]
+        var no_row = ans_table.rows[yes_no_ind + 2]
+        yes_row.style.display = ""
+        no_row.style.display = ""        
+        document.getElementById("yes_" + this.id).checked = true        
+    } else if (document.getElementById("no_" + this.id) && document.getElementById("no_" + this.id).checked) {
+        document.getElementById("yes_no").checked = true
+        var yes_no_ind = document.getElementById("yes_no_row").rowIndex
+        var ans_table = document.getElementById("ans_table");
+        var yes_row = ans_table.rows[yes_no_ind + 1]
+        var no_row = ans_table.rows[yes_no_ind + 2]
+        yes_row.style.display = ""
+        no_row.style.display = ""
+        document.getElementById("no_" + this.id).checked = true
     } else {
         document.getElementById("span").checked = true
         var span_elements = get_elements_by_id_starts_with("ans_table", "input", "span-" + this.id)
@@ -166,7 +183,7 @@ function modify_previous_question() {
     question_el.dispatchEvent(new KeyboardEvent('keyup', { 'key': ' ' }))
 }
 
-// Remove digit element 
+// Delete previous digit element while modifying
 function remove_digit() {
     var prev_digit_el = document.getElementById("digit-" + current_q_id)
     if (prev_digit_el) {
@@ -174,7 +191,19 @@ function remove_digit() {
     }
 }
 
-// Remove date element
+// Delete previous yes/no element while modifying
+function remove_bool() {
+    var prev_bool_el = document.getElementById("yes_" + current_q_id)
+    if (prev_bool_el) {
+        prev_bool_el.remove()
+    }
+    var prev_bool_el = document.getElementById("no_" + current_q_id)
+    if (prev_bool_el) {
+        prev_bool_el.remove()
+    }
+}
+
+// Delete previous date element while modifying
 function remove_date() {
     var prev_date_el = document.getElementById("date-" + current_q_id)
     if (prev_date_el) {
@@ -182,7 +211,7 @@ function remove_date() {
     }
 }
 
-// Remove span element
+// Delete previous span element while modifying
 function remove_span() {
     var span_el = get_elements_by_id_starts_with("ans_table", "input", "span-" + current_q_id)
     for (var i = 0; i < span_el.length; i++) {
@@ -195,12 +224,13 @@ function remove_span() {
 function create_text_for_tab(q_num, flag_exists) {
     var empty_qa = false
     var correct_flag = true
+    var duplicate_check = false
     var question_el = document.getElementById("input-question" + q_num)
     if (question_el.value.trim() == "") {
         empty_qa = empty_qa || true
     }
 
-    var qa_text = "Q: " + question_el.value + "\n A: "
+    var qa_text = "Q: " + question_el.value + "\nA: "
     if (document.getElementById("date").checked) {
         var year = document.getElementById("year" + q_num).value
         var month = document.getElementById("month" + q_num).value
@@ -212,10 +242,11 @@ function create_text_for_tab(q_num, flag_exists) {
         }
         qa_text = qa_text + input_date
         var ai_overlap = bow_overlap(document.getElementById("ai-answer").innerText, input_date, 1.0)
-
+        var duplicate_check = duplicate_qa_check(qa_text)
         if (flag_exists) {
             remove_digit()
             remove_span()
+            remove_bool()
         }
 
     } else if (document.getElementById("digit").checked) {
@@ -228,10 +259,11 @@ function create_text_for_tab(q_num, flag_exists) {
         }
         qa_text = qa_text + input_number
         var ai_overlap = bow_overlap(document.getElementById("ai-answer").innerText, input_number, 1.0)
-
+        var duplicate_check = duplicate_qa_check(qa_text)
         if (flag_exists) {
             remove_date()
             remove_span()
+            remove_bool()
         }
 
     } else if (document.getElementById("span").checked) {
@@ -248,18 +280,36 @@ function create_text_for_tab(q_num, flag_exists) {
         }
         var ai_overlap = bow_overlap(document.getElementById("ai-answer").innerText, input_spans, 1.0)
         qa_text = qa_text + input_spans
-
+        var duplicate_check = duplicate_qa_check(qa_text)
         if (flag_exists) {
             remove_date()
             remove_digit()
+            remove_bool()
         }
 
+    } else if (document.getElementById("yes_no").checked) {
+        var bool_el = document.getElementsByName("yes_no")
+        
+        if (bool_el[0].checked) {
+            qa_text = qa_text + "Yes"
+            var ai_overlap = bow_overlap(document.getElementById("ai-answer").innerText, "Yes", 1.0)
+        } else {
+            qa_text = qa_text + "No"
+            var ai_overlap = bow_overlap(document.getElementById("ai-answer").innerText, "No", 1.0)
+        }
+        if (flag_exists) {
+            remove_date()
+            remove_digit()
+            remove_span()
+        }
     }
+
     return {
         "qa_text": qa_text,
         "ai_overlap": ai_overlap,
         "empty_qa": empty_qa,
-        "correct_text": correct_flag
+        "correct_text": correct_flag,
+        "duplicate_check": duplicate_check
     }
 }
 
@@ -287,11 +337,12 @@ function create_question() {
     var ai_overlap = result.ai_overlap
     var empty_qa = result.empty_qa
     var correct_flag = result.correct_text
+    var duplicate_check = result.duplicate_check
 
     var tab_container = document.getElementsByClassName("horizontal-scroll-wrapper")[0]
 
     // If all the checks satify 
-    if (correct_flag && ai_overlap && !empty_qa) {
+    if (correct_flag && ai_overlap && !empty_qa && !duplicate_check) {
 
         // Create the bottom tab container if its a new questionand question is new add it
         if (!flag_exists) {
@@ -302,7 +353,8 @@ function create_question() {
             new_tab.innerText = qa_text
             tab_container.appendChild(new_tab);
             question_num = question_num + 1
-        // else just modify the text
+            total_question_cnt = total_question_cnt + 1
+            // else just modify the text
         } else {
             var curr_tab = document.getElementById(current_qnum);
             curr_tab.innerText = qa_text
@@ -313,6 +365,7 @@ function create_question() {
         deselect_date()
         deselect_digit()
         deselect_span()
+        deselect_bool()
         document.getElementById('ai-answer').innerText = ""
 
         // Create new question text for next question
@@ -332,7 +385,13 @@ function create_question() {
     } else if (!ai_overlap) {
         var parent = document.getElementsByClassName("error_panel")[0]
         parent.innerText = "AI answer matches true answer. Please try a different question."
-    } 
+    } else if (duplicate_check) {
+        var parent = document.getElementsByClassName("error_panel")[0]
+        parent.innerText = "Same question-answer pair has alreday been added.  Please try a different question."
+    } else {
+        var parent = document.getElementsByClassName("error_panel")[0]
+        parent.innerText = "Something wrong with the answer please try a differenet question."
+    }
 }
 
 // Run span checks on hover 
@@ -353,8 +412,9 @@ function run_validations_span() {
     var ai_overlap = result.ai_overlap
     var empty_qa = result.empty_qa
     var correct_flag = result.correct_text
+    var duplicate_check = result.duplicate_check
 
-    if (correct_flag && ai_overlap && !empty_qa) {
+    if (correct_flag && ai_overlap && !empty_qa && !duplicate_check) {
         document.getElementById("next_question").style.background = "#2085bc";
     }
     else if (!correct_flag) {
@@ -373,11 +433,24 @@ function run_validations_span() {
         document.getElementById("next_question").style.background = "darkgray";
         var parent = document.getElementsByClassName("error_panel")[0]
         parent.innerText = "AI answer matches true answer. Please try a different question."
-
+    } else if (duplicate_check) {
+        var parent = document.getElementsByClassName("error_panel")[0]
+        parent.innerText = "Same question-answer pair has alreday been added.  Please try a different question."
     } else {
         document.getElementById("next_question").style.background = "darkgray";
         var parent = document.getElementsByClassName("error_panel")[0]
         parent.innerText = "Something wrong with the answer please try a differenet question."
+    }
+}
+
+// Run boolean checks on click 
+function run_validations_bool() {
+    var bool_el = document.getElementsByName("yes_no")
+    if (bool_el[0].checked || bool_el[1].checked) {
+        document.getElementById("next_question").style.background = "#2085bc";
+    } else {
+        var parent = document.getElementsByClassName("error_panel")[0]
+        parent.innerText = "Please choose an answer Yes or No."
     }
 }
 
@@ -400,7 +473,7 @@ function run_validations_date_digit() {
     var empty_qa = result.empty_qa
     var correct_flag = result.correct_text
 
-    if (ai_overlap && !empty_qa) {
+    if (ai_overlap && !empty_qa && !duplicate_check) {
         document.getElementById("next_question").style.background = "#2085bc";
     } else if (empty_qa) {
         document.getElementById("next_question").style.background = "darkgray";
@@ -410,11 +483,25 @@ function run_validations_date_digit() {
         document.getElementById("next_question").style.background = "darkgray";
         var parent = document.getElementsByClassName("error_panel")[0]
         parent.innerText = "AI answer matches true answer. Please try a different question."
+    } else if (duplicate_check) {
+        var parent = document.getElementsByClassName("error_panel")[0]
+        parent.innerText = "Same question-answer pair has alreday been added.  Please try a different question."
     } else {
         document.getElementById("next_question").style.background = "darkgray";
         var parent = document.getElementsByClassName("error_panel")[0]
         parent.innerText = "Something wrong with the answer please try a differenet question."
     }
+}
+
+function duplicate_qa_check(cand_text) {
+    cand_text = cand_text.toLowerCase().trim()
+    var qa_list = document.getElementsByClassName("rectangles")
+    for (var i = 0; i < qa_list.length; i++) {
+        if (cand_text == qa_list[i].innerText.toLowerCase().trim()) {
+            return true
+        }
+    }
+    return false
 }
 
 // Check for 'how many' string in question
@@ -726,18 +813,24 @@ function create_input_date() {
 
 // add element for yes-no type answer
 function create_yes_no() {
-    var yes_no_ind = document.getElementById("date_row").rowIndex
-    var ans_table = document.getElementById("ans_table");
-    var yes_no_row = ans_table.cells[yes_no_ind + 1]
-    var y_n_td = yes_no_row.insertCell(1)
-    y_n_td.innerHTML = '<input type="radio" name="yes_no" value="no">No'
-    y_n_td.width = "70%"
-    y_n_td.id = "yes_no_" 
-
-    document.getElementById("yes_no_row_1").add_row
-
     document.getElementById("yes_no_row_1").style.display = ""
     document.getElementById("yes_no_row_2").style.display = ""
+
+    var yes_no_ind = document.getElementById("yes_no_row").rowIndex
+    var ans_table = document.getElementById("ans_table");
+    var yes_row = ans_table.rows[yes_no_ind + 1]
+    var y_td = yes_row.insertCell(1)
+    y_td.innerHTML = '<input type="radio" name="yes_no" value="yes" id="yes_' + current_q_id + '">Yes'
+    y_td.width = "50%"
+    y_td.id = "yes_row_" + current_q_id
+    y_td.onclick = run_validations_bool
+
+    var no_row = ans_table.rows[yes_no_ind + 2]
+    var n_td = no_row.insertCell(1)
+    n_td.innerHTML = '<input type="radio" name="yes_no" value="no" id="no_' + current_q_id + '">No'
+    n_td.width = "50%"
+    n_td.id = "no_row_" + current_q_id
+    n_td.onclick = run_validations_bool
     deselect_date()
     deselect_span()
     deselect_digit()
@@ -775,8 +868,13 @@ function create_input_digit() {
 
 // deselect yes-no type answer
 function deselect_bool() {
-    document.getElementById("yes_no_row_1").style.display = "none"
-    document.getElementById("yes_no_row_2").style.display = "none"
+    if (document.getElementById("yes_row_" + current_q_id)) {
+        document.getElementById("yes_row_" + current_q_id).style.display = "none"
+    }
+    if (document.getElementById("no_row_" + current_q_id)) {
+        document.getElementById("no_row_" + current_q_id).style.display = "none"
+    }
+    document.getElementById("yes_no").checked = false
 }
 
 // deselect date type answer
@@ -905,10 +1003,16 @@ function populate_passage(config) {
         }
 
         if (record_count == passages.length) {
-            var submit_btn = document.getElementById("submitButton");
-            submit_btn.style.display = ""
-            var next_passage = document.getElementById("next_passage")
-            next_passage.remove()
+            if (total_question_cnt <= 10) {
+                var parent = document.getElementsByClassName("error_panel")[0]
+                parent.innerText = "We have reached the last passage and we need a total of 10 questions. Please write " + (10 - total_question_cnt) + " more questions to submit the HIT."
+            } else {
+                reset_error()
+                var submit_btn = document.getElementById("submitButton");
+                submit_btn.style.display = ""
+                var next_passage = document.getElementById("next_passage")
+                next_passage.remove()
+            }
         }
     }
     if (record_count <= 1) {
@@ -947,6 +1051,7 @@ function invoke_bidaf() {
             if (response.status !== 200) {
                 console.log('Looks like there was a problem. Status Code: ' +
                     response.status);
+                document.getElementsByClassName("wait_loop")[0].innerText = ""
                 return;
             }
 
@@ -959,6 +1064,52 @@ function invoke_bidaf() {
         }
     ).catch(function (err) {
         console.log('Fetch Error :-S', err);
+        document.getElementsByClassName("wait_loop")[0].innerText = ""
+    });
+}
+
+function resolve_response(response) {
+    if (response.status !== 200) {
+        console.log('Looks like there was a problem. Status Code: ' +
+            response.status);
+        document.getElementsByClassName("wait_loop")[0].innerText = ""
+        return;
+    }
+
+    // Examine the text in the response
+    response.json().then(function (data) {
+        document.getElementById('ai-answer').innerText = data["best_span_str"]
+        document.getElementsByClassName("wait_loop")[0].innerText = ""
+        return;
+    });
+
+}
+
+function error_response() {
+    console.log('Fetch Error :-S', err);
+    document.getElementsByClassName("wait_loop")[0].innerText = ""
+}
+
+function invoke_bidaf_with_retries(n) {
+    var r = {
+        passage: document.getElementsByClassName('passage-' + record_count)[0].innerText,
+        question: document.getElementById('input-question-' + current_q_id).value
+    };
+    return new Promise(function (resolve, reject) {
+        fetch("https://sparc-bidaf-server.dev.allenai.org/predict", {
+            method: "POST",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(r)
+        }).then(resolve_response) // <--- Much cleaner!
+            .catch(function (error) {
+                if (n === 1) return reject(error_response);
+                invoke_bidaf_with_retries(n - 1)
+                    .then(resolve_response)
+                    .catch(error_response);
+            })
     });
 }
 
