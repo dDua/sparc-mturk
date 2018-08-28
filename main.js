@@ -569,6 +569,9 @@ function reset_higlight() {
     var q10_span = parent.getElementsByClassName("ans_span10_high")
     var q11_span = parent.getElementsByClassName("ans_span11_high")
     var q12_span = parent.getElementsByClassName("ans_span12_high")
+    var q13_span = parent.getElementsByClassName("ans_span13_high")
+    var q14_span = parent.getElementsByClassName("ans_span14_high")
+    var q15_span = parent.getElementsByClassName("ans_span15_high")
 
     if (q1_span != 'null') {
         reset_class(q1_span, "ans_span1")
@@ -604,7 +607,16 @@ function reset_higlight() {
         reset_class(q11_span, "ans_span11")
     }
     if (q12_span != 'null') {
-        reset_class(q11_span, "ans_span11")
+        reset_class(q12_span, "ans_span12")
+    }
+    if (q13_span != 'null') {
+        reset_class(q13_span, "ans_span13")
+    }
+    if (q14_span != 'null') {
+        reset_class(q14_span, "ans_span14")
+    }
+    if (q15_span != 'null') {
+        reset_class(q15_span, "ans_span15")
     }
 }
 
@@ -771,6 +783,23 @@ function highlight_q6_nfl() {
     reset_class(q_span, "ans_span10_high")
     var q_span = parent.getElementsByClassName("ans_span11");
     reset_class(q_span, "ans_span11_high")
+}
+
+// event on hover over on annotated question
+function highlight_q8_nfl() {
+    var parent = document.getElementsByClassName("passage-sample")[0];
+    var q_span = parent.getElementsByClassName("ans_span5");
+    reset_class(q_span, "ans_span5_high")
+    var q_span = parent.getElementsByClassName("ans_span13");
+    reset_class(q_span, "ans_span13_high")
+    var q_span = parent.getElementsByClassName("ans_span7");
+    reset_class(q_span, "ans_span7_high")
+    var q_span = parent.getElementsByClassName("ans_span8");
+    reset_class(q_span, "ans_span8_high")
+    var q_span = parent.getElementsByClassName("ans_span15");
+    reset_class(q_span, "ans_span15_high")
+    var q_span = parent.getElementsByClassName("ans_span14");
+    reset_class(q_span, "ans_span14_high")
 }
 
 // event on hover over on annotated question
