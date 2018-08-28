@@ -14,6 +14,7 @@
             <h2>Complex question answering with high-level reasoning and inference</h2>
             <a href="collapse" onclick="return collapse();" id="collapse_link">(Click to collapse)</a>
             <div class="annotated">
+              <div>
                 <p>
                     This task involves creating questions and answers from a given passage that involve some kind of complex reasoning.
                     The answer to the question can be words from the passage, dates, or numbers.  The most important point is that the
@@ -25,105 +26,109 @@
                     Below, we provide some example questions that involve different kinds of reasoning.  Try to use a variety of
                     reasoning types in the questions you come up with, and also have a variety of answer types (spans, numbers, dates).
                 </p>
-            </div>
-            <div align="left">
-                <h4>
-                    <b>Example questions</b>
-                </h4>
-                <p style="text-align:center">Move your mouse over a question to highlight the part of the passage that answers the question.</p>
-            </div>
+              </div>
+              <div align="left">
+                  <h4>
+                      <b>Example questions</b>
+                  </h4>
+                  <p style="text-align:center">Move your mouse over a question to highlight the part of the passage that answers the question.</p>
+              </div>
 
-            <div class="left_panel">
-                <h2>Passage</h2>
-                <div class="passage-sample">
-                    Austria-Hungary precipitated the <span class="ans_span1">Bosnian crisis of 1908-1909</span>
-                    by <span class="ans_span8">officially annexing the former Ottoman territory of Bosnia and Herzegovina</span>, which it had
-                    occupied since <span class="ans_span3">1878 </span>. This <span class="ans_span9">
-                        angered the Kingdom of Serbia and
-                        its patron, the Pan-Slavic and Orthodox Russian Empire
-                    </span>. Russian political manoeuvring in the
-                    region destabilised peace accords that were already fracturing in the Balkans, which came to
-                    be known as the "powder keg of Europe." In <span class="ans_span4">
-                        1912 and 1913,
-                        the First Balkan War
-                    </span> was fought between the Balkan League and the fracturing Ottoman Empire.
-                    The resulting Treaty of London further shrank the Ottoman Empire, creating an independent Albanian state while enlarging the
-                    territorial holdings of <span class="ans_span6">Bulgaria, Serbia, Montenegro, and Greece </span>. When <span class="ans_span2">
-                        Bulgaria attacked Serbia
-                        and Greece on 16 June 1913
-                    </span>, it <span class="ans_span10">
-                        lost most of Macedonia to Serbia
-                        and Greece
-                    </span>, and Southern Dobruja to Romania in the <span class="ans_span5">
-                        33-day
-                        Second Balkan War
-                    </span> , further destabilising the region. The Great Powers were able to keep these
-                    Balkan conflicts contained, but the next one would spread throughout Europe and beyond.
-                </div>
+              <div class="left_panel">
+                  <h2>Passage</h2>
+                  <div class="passage-sample">
+                      Austria-Hungary precipitated the <span class="ans_span1">Bosnian crisis of 1908-1909</span>
+                      by <span class="ans_span8">officially annexing the former Ottoman territory of Bosnia and Herzegovina</span>, which it had
+                      occupied since <span class="ans_span3">1878 </span>. This <span class="ans_span9">
+                          angered the Kingdom of Serbia and
+                          its patron, the Pan-Slavic and Orthodox Russian Empire
+                      </span>. Russian political manoeuvring in the
+                      region destabilised peace accords that were already fracturing in the Balkans, which came to
+                      be known as the "powder keg of Europe." In <span class="ans_span4">
+                          1912 and 1913,
+                          the First Balkan War
+                      </span> was fought between the Balkan League and the fracturing Ottoman Empire.
+                      The resulting Treaty of London further shrank the Ottoman Empire, creating an independent Albanian state while enlarging the
+                      territorial holdings of <span class="ans_span6">Bulgaria, Serbia, Montenegro, and Greece </span>. When <span class="ans_span2">
+                          Bulgaria attacked Serbia
+                          and Greece on 16 June 1913
+                      </span>, it <span class="ans_span10">
+                          lost most of Macedonia to Serbia
+                          and Greece
+                      </span>, and Southern Dobruja to Romania in the <span class="ans_span5">
+                          33-day
+                          Second Balkan War
+                      </span> , further destabilising the region. The Great Powers were able to keep these
+                      Balkan conflicts contained, but the next one would spread throughout Europe and beyond.
+                  </div>
+              </div>
+
+              <div class="right_panel_sample">
+                  <div class="tab qapairs">
+                      <h3>Addition or Subtraction</h3>
+                      <div class="query" onmouseover="highlight_q1();" onmouseout="reset_higlight();">
+                          Question : How long did take for Austria-Hungary to annex Bosnia and Herzegovina? <br />
+                          Answer : 31 years (number)<br />
+                      </div>
+                      <div class="query" onmouseover="highlight_q2();" onmouseout="reset_higlight();">
+                          Question : When did the Second Balkan war end? <br />
+                          Answer : 19 July 1913 (date)<br />
+                      </div>
+                      <div class="query" onmouseover="highlight_q3();" onmouseout="reset_higlight();">
+                          Question : How long did the Bosnian Crisis last? <br />
+                          Answer : 1 year (number) <br />
+                      </div>
+                      <hr>
+                      <h3>Set Overlap or Joins</h3>
+                      <div class="query" onmouseover="highlight_q4();" onmouseout="reset_higlight();">
+                          Question : In which year did the two wars, First Balkan war and Bulgarian attack on Serbias and Greece overlap? <br />
+                          Answer : 1913 (date)
+                      </div>
+                      <div class="query" onmouseover="highlight_q5();" onmouseout="reset_higlight();">
+                          Question : Which two wars were ongoing in 1913? <br />
+                          Answer : "First Balkan war", "Second Balkan War" (two separate spans)
+                      </div>
+                      <div class="query" onmouseover="highlight_q9();" onmouseout="reset_higlight();">
+                          Question : Which country started the Second Balkan War? <br />
+                          Answer : Bulgaria (span)
+                      </div>
+                      <hr>
+                      <h3>Comparison</h3>
+                      <div class="query" onmouseover="highlight_q6();" onmouseout="reset_higlight();">
+                          Question :  Which happened first, the Bosnian crisis or the First Balkan War? <br />
+                          Answer : Bosnian crisis (span)
+                      </div>
+                      <hr>
+                      <h3>Count</h3>
+                      <div class="query" onmouseover="highlight_q7();" onmouseout="reset_higlight();">
+                          Question : How many countries were enlarged as a part of Treaty of London? <br />
+                          Answer : 4 (number)<br />
+                      </div>
+                      <hr>
+                      <h3>Find minimum or maximum</h3>
+                      <div class="query" onmouseover="highlight_q8();" onmouseout="reset_higlight();">
+                          Question : Which was the first war to have happened? <br />
+                          Answer : Bosnian Crisis (span)
+                      </div>
+                      <hr>
+                  </div>
+              </div>
+                  <h2 id="Q1">Let's start writing some questions now!</h2>
+                  <h4> <b>The Rules of the task are as follows : </b></h4>
+                  <ol>
+                      <li> Given a passage, you need to create questions that can be answered from the passage. </li>
+                      <li> You have five passages to pick from, and between these five passages, you must create at least 10 questions to
+                        submit the HIT.</li>
+                      <li> Once you create the question, you need to write its answer, either in the form of a date, a number, or spans
+                        copied directly from the passage.</li>
+                      <li> There is an AI running in the background which will also try to answer the question.</li>
+                      <li> You won't be able to submit the question if the AI gives the same reponse. </li>
+                      <li> You can go back and forth between the passages, and you can edit questions by clicking on them.  Once you have
+                        finished all 10 questions, go to the last passage to submit the HIT.</li>
+                      <li> The answers will be cross-checked and the HIT will be rejected if a lot of anwers are incorrect. So, please be
+                        honest and help us in our research.</li>
+                  </ol>
             </div>
-
-            <div class="right_panel_sample">
-                <div class="tab qapairs">
-                    <h3>Addition or Subtraction</h3>
-                    <div class="query" onmouseover="highlight_q1();" onmouseout="reset_higlight();">
-                        Question : How long did take for Austria-Hungary to annex Bosnia and Herzegovina? <br />
-                        Answer : 31 years (number)<br />
-                    </div>
-                    <div class="query" onmouseover="highlight_q2();" onmouseout="reset_higlight();">
-                        Question : When did the Second Balkan war end? <br />
-                        Answer : 19 July 1913 (date)<br />
-                    </div>
-                    <div class="query" onmouseover="highlight_q3();" onmouseout="reset_higlight();">
-                        Question : How long did the Bosnian Crisis last? <br />
-                        Answer : 1 year (number) <br />
-                    </div>
-                    <hr>
-                    <h3>Set Overlap or Joins</h3>
-                    <div class="query" onmouseover="highlight_q4();" onmouseout="reset_higlight();">
-                        Question : In which year did the two wars, First Balkan war and Bulgarian attack on Serbias and Greece overlap? <br />
-                        Answer : 1913 (date)
-                    </div>
-                    <div class="query" onmouseover="highlight_q5();" onmouseout="reset_higlight();">
-                        Question : Which two wars were ongoing in 1913? <br />
-                        Answer : "First Balkan war", "Second Balkan War" (two separate spans)
-                    </div>
-                    <div class="query" onmouseover="highlight_q9();" onmouseout="reset_higlight();">
-                        Question : Which country started the Second Balkan War? <br />
-                        Answer : Bulgaria (span)
-                    </div>
-                    <hr>
-                    <h3>Comparison</h3>
-                    <div class="query" onmouseover="highlight_q6();" onmouseout="reset_higlight();">
-                        Question :  Which happened first, the Bosnian crisis or the First Balkan War? <br />
-                        Answer : Bosnian crisis (span)
-                    </div>
-                    <hr>
-                    <h3>Count</h3>
-                    <div class="query" onmouseover="highlight_q7();" onmouseout="reset_higlight();">
-                        Question : How many countries were enlarged as a part of Treaty of London? <br />
-                        Answer : 4 (number)<br />
-                    </div>
-                    <hr>
-                    <h3>Find minimum or maximum</h3>
-                    <div class="query" onmouseover="highlight_q8();" onmouseout="reset_higlight();">
-                        Question : Which was the first war to have happened? <br />
-                        Answer : Bosnian Crisis (span)
-                    </div>
-                    <hr>
-                </div>
-            </div>
-
-            <h2 id="Q1">Lets start writing some questions now!</h2>
-            <h4> <b>The Rules of the task are as follows : </b></h4>
-            <ol>
-                <li> Given a passage, you need to create questions that can be answered from the passage. </li>
-                <li> Once you create the question, you need to write its answer, either in the form of a date, a number or spans copied directly from the passage.</li>
-                <li> There is an AI running in the background which will also try to answer the question.</li>
-                <li> You won't be able to submit the question if the AI gives the same reponse. </li>
-                <li> The answers will be cross-checked and the HIT will be rejected if a lot of anwers are incorrect. So, please be honest and help us in our research.</li>
-                <li> Please create at least 10 question in the entire hit </li>
-            </ol>
-
             <div class="main-container">
                 <br />
                 <div class="passage_num">
