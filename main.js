@@ -96,7 +96,7 @@ function initialize_answer() {
     clearTimeout(timeout);
 
     timeout = setTimeout(function () {
-       // invoke_bidaf_with_retries(3);
+        invoke_bidaf_with_retries(3);
     }, 1000);
 }
 
