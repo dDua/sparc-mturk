@@ -10,6 +10,7 @@
 <body onload="populate_passage('next');">
     <form name='mturk_form' method='post' id='mturk_form' action='https://www.mturk.com/mturk/externalSubmit'>
         <input type='hidden' value='' name='assignmentId' id='assignmentId' />
+
         <div id="root">
             <h2>Complex question answering with high-Level reasoning and inference</h2>
             <a href="collapse" onclick="return collapse();" id="collapse_link">(Click to collapse)</a>
@@ -28,98 +29,131 @@
                     </p>
                 </div>
 
-            <div align="left">
-                <h4>
-                    <b>Example questions</b>
-                </h4>
-                <p style="text-align:center">Move your mouse over a question to highlight the part of the passage that answers the question.</p>
-            </div>
-
-            <div class="left_panel">
-                <h2>Passage</h2>
-                <div class="passage-sample">
-
-                    The Ravens drew first blood when <span class="ans_span13">Joe Flacco found Vonta Leach on a <span class="ans_span5">
-                        2-yard </span> touchdown pass</span> to take the lead 7–0 in the first quarter for the only score of the period.
-                    The <span class="ans_span12"> Broncos would tie the game in the 2nd quarter </span> with <span class="ans_span7">Peyton
-                      Manning finding Julius Thomas on a 24-yard pass</span> to take the game to <span class="ans_span2">7–7</span>. The
-                    Ravens moved back into the lead when Ray Rice ran for a 1-yard touchdown to make the score <span class="ans_span1">14–7
-                    </span>. <span class="ans_span8">Peyton would find Julius again on a 23-yard pass</span> to make the score
-                    <span class="ans_span9">14–14</span> for another tie before the <span class="ans_span6">Ravens kicker Justin Tucker
-                      nailed a 25-yard field goal</span> to make the score <span class="ans_span3">17–14</span> at halftime.  In the 3rd
-                    quarter, the Broncos went right back to work as <span class="ans_span15">Peyton found Andre Caldwell on a 28-yard
-                      touchdown pass</span> to take a <span class="ans_span10">21–17</span> lead followed up with <span class="ans_span14">
-                      finding Wes Welker on 2 consecutive passes</span> from 5 yards and <span class="ans_span4">2 yards </span>out for an
-                    increase in the lead first to <span class="ans_span11">28–17 and then to 35–17</span>.
-
-                </div>
-            </div>
-
-            <div class="right_panel_sample">
-                <div class="tab qapairs">
-                    <h3>Addition or Subtraction</h3>
-                    <div class="query" onmouseover="highlight_q1_nfl();" onmouseout="reset_higlight();">
-                        Question : How many points did the Broncos score in the second quarter? <br />
-                        Answer : 7 (number)<br />
-                    </div>
-                    <div class="query" onmouseover="highlight_q2_nfl();" onmouseout="reset_higlight();">
-                        Question : How many points did the Ravens score in the second quarter? <br />
-                        Answer : 10 (number)<br />
-                    </div>
-                    <hr>
-                    <h3>Set Overlap or Joins</h3>
-                    <div class="query" onmouseover="highlight_q3_nfl();" onmouseout="reset_higlight();">
-                        Question : Which yard line did both teams score from? <br />
-                        Answer : 2 (number)
-                    </div>
-                    <div class="query" onmouseover="highlight_q8_nfl();" onmouseout="reset_higlight();">
-                        Question : Who threw more passes, Joe Flacco or Peyton Manning? <br />
-                        Answer : Peyton Manning (span)
-                    </div>
-                    <hr>
-                    <h3>Comparison</h3>
-                    <div class="query" onmouseover="highlight_q4_nfl();" onmouseout="reset_higlight();">
-                        Question : Which team was in the lead at halftime? <br />
-                        Answer : Ravens (span)
-                    </div>
-                    <hr>
-                    <h3>Count</h3>
-                    <div class="query" onmouseover="highlight_q5_nfl();" onmouseout="reset_higlight();">
-                        Question : How many times did Peyton throw a pass to Julius?
-                        <br />
-                        Answer : 2 (number)<br />
-                    </div>
-                    <hr>
-                    <h3>Find minimum or maximum</h3>
-                    <div class="query" onmouseover="highlight_q6_nfl();" onmouseout="reset_higlight();">
-                        Question : Who scored the most points? <br />
-                        Answer : Peyton Manning (span)
-                    </div>
-                    <hr>
+                <div align="left">
+                    <h4>
+                        <b>Example questions</b>
+                    </h4>
+                    <p style="text-align:center">Move your mouse over a question to highlight the part of the passage that answers the question.</p>
                 </div>
 
+                <div class="left_panel">
+                    <h2>Passage</h2>
+                    <div class="passage-sample">
+
+                        The Ravens drew first blood when <span class="ans_span13">
+                            Joe Flacco found Vonta Leach on a <span class="ans_span5">
+                                2-yard
+                            </span> touchdown pass
+                        </span> to take the lead 7–0 in the first quarter for the only score of the period.
+                        The <span class="ans_span12"> Broncos would tie the game in the 2nd quarter </span> with <span class="ans_span7">
+                            Peyton
+                            Manning finding Julius Thomas on a 24-yard pass
+                        </span> to take the game to <span class="ans_span2">7–7</span>. The
+                        Ravens moved back into the lead when Ray Rice ran for a 1-yard touchdown to make the score <span class="ans_span1">
+                            14–7
+                        </span>. <span class="ans_span8">Peyton would find Julius again on a 23-yard pass</span> to make the score
+                        <span class="ans_span9">14–14</span> for another tie before the <span class="ans_span6">
+                            Ravens kicker Justin Tucker
+                            nailed a 25-yard field goal
+                        </span> to make the score <span class="ans_span3">17–14</span> at halftime.  In the 3rd
+                        quarter, the Broncos went right back to work as <span class="ans_span15">
+                            Peyton found Andre Caldwell on a 28-yard
+                            touchdown pass
+                        </span> to take a <span class="ans_span10">21–17</span> lead followed up with <span class="ans_span14">
+                            finding Wes Welker on 2 consecutive passes
+                        </span> from 5 yards and <span class="ans_span4">2 yards </span>out for an
+                        increase in the lead first to <span class="ans_span11">28–17 and then to 35–17</span>.
+
+                    </div>
+                </div>
+
+                <div class="right_panel_sample">
+                    <div class="tab qapairs">
+                        <h3>Addition or Subtraction</h3>
+                        <div class="query" onmouseover="highlight_q1_nfl();" onmouseout="reset_higlight();">
+                            Question : How many points did the Broncos score in the second quarter? <br />
+                            Answer : 7 (number)<br />
+                        </div>
+                        <div class="query" onmouseover="highlight_q2_nfl();" onmouseout="reset_higlight();">
+                            Question : How many points did the Ravens score in the second quarter? <br />
+                            Answer : 10 (number)<br />
+                        </div>
+                        <hr>
+                        <h3>Set Overlap or Joins</h3>
+                        <div class="query" onmouseover="highlight_q3_nfl();" onmouseout="reset_higlight();">
+                            Question : Which yard line did both teams score from? <br />
+                            Answer : 2 (number)
+                        </div>
+                        <div class="query" onmouseover="highlight_q8_nfl();" onmouseout="reset_higlight();">
+                            Question : Who threw more passes, Joe Flacco or Peyton Manning? <br />
+                            Answer : Peyton Manning (span)
+                        </div>
+                        <hr>
+                        <h3>Comparison</h3>
+                        <div class="query" onmouseover="highlight_q4_nfl();" onmouseout="reset_higlight();">
+                            Question : Which team was in the lead at halftime? <br />
+                            Answer : Ravens (span)
+                        </div>
+                        <hr>
+                        <h3>Count</h3>
+                        <div class="query" onmouseover="highlight_q5_nfl();" onmouseout="reset_higlight();">
+                            Question : How many times did Peyton throw a pass to Julius?
+                            <br />
+                            Answer : 2 (number)<br />
+                        </div>
+                        <hr>
+                        <h3>Find minimum or maximum</h3>
+                        <div class="query" onmouseover="highlight_q6_nfl();" onmouseout="reset_higlight();">
+                            Question : Who scored the most points? <br />
+                            Answer : Peyton Manning (span)
+                        </div>
+                        <hr>
+                    </div>
+
+                </div>
+
+
+
+                <h2 id="Q1">Let's start writing some questions now!</h2>
+                <h4> <b>The Rules of the task are as follows : </b></h4>
+                <ol>
+                    <li> Given a passage, you need to create questions that can be answered from the passage. </li>
+                    <li>
+                        You have five passages to pick from, and between these five passages, you must create at least 10 questions to
+                        submit the HIT.
+                    </li>
+                    <li>
+                        Once you create the question, you need to write its answer, either in the form of a date, a number, or spans
+                        copied directly from the passage.
+                    </li>
+                    <li> There is an AI running in the background which will also try to answer the question.</li>
+                    <li> You won't be able to submit the question if the AI gives the same reponse. </li>
+                    <li>
+                        You can go back and forth between the passages, and you can edit questions by clicking on them.  Once you have
+                        finished all 10 questions, go to the last passage to submit the HIT.
+                    </li>
+                    <li>
+                        The answers will be cross-checked and the HIT will be rejected if a lot of anwers are incorrect. So, please be
+                        honest and help us in our research.
+                    </li>
+                </ol>
             </div>
-            
 
-
-            <h2 id="Q1">Let's start writing some questions now!</h2>
-            <h4> <b>The Rules of the task are as follows : </b></h4>
-            <ol>
-                <li> Given a passage, you need to create questions that can be answered from the passage. </li>
-                <li> You have five passages to pick from, and between these five passages, you must create at least 10 questions to
-                  submit the HIT.</li>
-                <li> Once you create the question, you need to write its answer, either in the form of a date, a number, or spans
-                  copied directly from the passage.</li>
-                <li> There is an AI running in the background which will also try to answer the question.</li>
-                <li> You won't be able to submit the question if the AI gives the same reponse. </li>
-                <li> You can go back and forth between the passages, and you can edit questions by clicking on them.  Once you have
-                  finished all 10 questions, go to the last passage to submit the HIT.</li>
-                <li> The answers will be cross-checked and the HIT will be rejected if a lot of anwers are incorrect. So, please be
-                  honest and help us in our research.</li>
-            </ol>
-        </div>
-            
             <div class="main-container">
+                <br />
+                <div class="notes">
+                    Just as a reminder, here are some patterns that often give good questions.  Combining ideas
+                    from several of these examples is even better. It's often good to use comparatives ("more", "longer", "farther") or superlatives ("most", "shortest") in questions. Here are some example question types for more help.
+                    <br />
+                    <br />
+                    <div class="notes-wrapper">
+                        <div class="note"> How long between two events? </div>
+                        <div class="note"> When did two things overlap? </div>
+                        <div class="note"> Which happened first, X or Y? </div>
+                        <div class="note"> Who had the most of something? </div>
+                        <div class="note"> How many ...? </div>
+                    </div>
+                </div>
                 <br />
                 <div class="passage_num">
                 </div>
@@ -145,11 +179,6 @@
                                     <div class="answer" align="center">
                                         <h4>Your Answer</h4>
                                         <table id="ans_table">
-                                            <tr id="span_row">
-                                                <td>
-                                                    <input type="radio" name="answer" id="span" value='span' onchange="return add_span();">Select span
-                                                </td>
-                                            </tr>
 
                                             <tr id="date_row">
                                                 <td>
@@ -161,6 +190,31 @@
                                                 <td align="center">Month</td>
                                                 <td align="center">Date</td>
                                             </tr>
+                                            <tr id="date_row_2" style="display:none">
+                                                <td align="center">
+                                                    <input type="number" id="year" name="year" min="1" max="3000" onkeyup="run_validations_date_digit();">
+                                                </td>
+                                                <td align="center">
+                                                    <select id="month" name="month" onkeyup="run_validations_date_digit();">
+                                                        <option></option>
+                                                        <option>January</option>
+                                                        <option>February</option>
+                                                        <option>March</option>
+                                                        <option>April</option>
+                                                        <option>May</option>
+                                                        <option>June</option>
+                                                        <option>July</option>
+                                                        <option>August</option>
+                                                        <option>September</option>
+                                                        <option>October</option>
+                                                        <option>November</option>
+                                                        <option>December</option>
+                                                    </select>
+                                                </td>
+                                                <td align="center">
+                                                    <input type="number" id="day" name="day" min="1" max="31" onkeyup="run_validations_date_digit();">
+                                                </td>
+                                            </tr>
 
                                             <tr id="digit_row">
                                                 <td>
@@ -170,30 +224,32 @@
                                             <tr id="digit_row_1" style="display:none">
                                                 <td align="center">Value</td>
                                                 <td align="center">Unit</td>
-                                             </tr>
-                                             <tr id="yes_no_row">
-                                                <td>
-                                                    <input type="radio" id="yes_no" name="answer" onchange="create_yes_no();">Yes/No
+                                            </tr>
+
+                                            <tr id="digit_row_2" style="display:none">
+                                                <td align="center">
+                                                    <input type="number" id="value" name="value" onkeyup="run_validations_date_digit();">
+                                                </td>
+                                                <td align="center">
+                                                    <input type="text" id="unit" name="unit" placeholder="yards, points etc." onkeyup="run_validations_date_digit();">
                                                 </td>
                                             </tr>
-                                            <tr id="yes_no_row_1" style="display:none">
-                                                <td width="50%"></td>
 
-                                            <tr id="yes_no_row_2" style="display:none">
-                                                <td width="50%"></td>
+                                            <tr id="span_row">
+                                                <td>
+                                                    <input type="radio" name="answer" id="span" value='span' onchange="return add_span(this);">Select span
+                                                </td>
                                             </tr>
 
                                         </table>
                                     </div>
 
                                 </div>
+
                                 <div id="rightcolumn">
                                     <h4>AI predicted the answer below <br />(wait for answer to appear below)</h4>
                                     <div class="ai_answer" align="center">
-                                        <span id="ai-answer"></span>
-                                    </div>
-                                    <div class="wait_loop">
-
+                                        <input id="ai-answer" type="text" readonly />
                                     </div>
 
                                 </div>
@@ -201,6 +257,14 @@
 
                             <div class="horizontal-scroll-wrapper">
                             </div>
+
+                            <br />
+                            <div id="bottomrow">
+                                <button id="next_question" type="button" class="btn-submit" onclick="create_question();">
+                                    Add Question
+                                </button>
+                            </div>
+
                         </div>
 
                     </div>
@@ -211,17 +275,26 @@
                 </div>
 
                 <div class="bottom_panel">
+
+                    <button id="ready_submit" type="button" class="btn" onclick="final_submit()" onmouseover="check_question_count();" style="height:50px;min-width:100px;background:darkgray">
+                        Ready to Submit HIT
+                    </button>
+
                     <button id="prev_passage" type="button" class="btn" onclick="populate_passage('previous');">
                         Previous Passage
                     </button>
-                    <button id="next_question" type="button" class="btn-submit" onclick="create_question();">
-                        Submit Question
-                    </button>
+
                     <button id="next_passage" type="button" class="btn" onclick="populate_passage('next');">
                         Next Passage
                     </button>
+
                 </div>
+
             </div>
+        </div>
+
+        <div id="submission" style="display:none">
+            <h2> Thank you for helping our research!</h2>
         </div>
         <p align="right"><input type='submit' id='submitButton' value='Submit HIT' style="display:none;height:50px;width:100px;" /></p>
     </form>

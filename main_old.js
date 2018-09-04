@@ -1,15 +1,12 @@
 ﻿var record_count = 0;
 var total_question_cnt = 0;
 var question_num = 0
-var passages = getContents_history().split("\n");
-var annotations = []
-var current_question_id = ""
+var passages = getContents().split("\n");
+var hasMarks = false
+var current_q_id = ""
 var edit_mode = false
-var annotations = {}
-var min_questions = 10
 
 document.onkeypress = function (event) {
-    // on enter press override to create question
     if (event.keyCode == 13) {
         create_question()
         return false;
@@ -17,7 +14,7 @@ document.onkeypress = function (event) {
 }
 
 //History passages
-function getContents_history() {
+function getContents() {
     var survey_data = `The 5th Light Infantry was a long established regiment in the Indian Army, dating from 1803. and had a good military record. It was initially known as the 2nd Battalion, 21st Bengal Native Infantry and was re-designated as the 42nd Bengal Native  Infantry in 1843. After the Indian Mutiny, also known as the Indian rebellion of 1857, the surviving Bengal regiments were renumbered in 1861 and consequently the 42nd became the 5th Bengal Native  Infantry. Following army reforms, the word ‘'Native'' was dropped the regiment simply became known as the 5th Light Infantry. The regiment was well known for several battle honors, which included the Arakan, Afghanistan and Kandahar 1842, Ghunze 1842, Kabul and Moodkee, Ferozeshah and Sobroan 1857. It also fought in the Second Afghan War of 1879-80 and the Third Burmese War of 1885-87, which led to the British annexation of Burma and its tributary Shan states. Immediately prior to World War One, the regiment was employed in garrison duties in India. In 1914 the 5th LI was stationed in Nowgong when it was posted to Singapore to replace the King's Own Yorkshire Light Infantry, which had been ordered to France. Unusually for 1914-15 the 5th Light Infantry was an entirely Muslim unit, mainly comprising Ranghars  and Pathans, commanded by British and Indian officers. Upon arrival in Singapore, the 5th Light Infantry was based in Alexandra Barracks.
     The Łódź insurrection, also known as the June Days, was an uprising by Polish workers in Łódź against the Russian Empire between 21-25 June 1905. This event was one of the largest disturbances in the Russian-controlled Congress Poland during the Russian Revolution of 1905. Poland was a major center of revolutionary fighting in the Russian Empire in 1905-1907, and the Łódź insurrection was a key incident in those events. For months, workers in Łódź had been in a state of unrest, with several major strikes having taken place, which were forcibly suppressed by the Russian police and military. The insurrection began spontaneously, without backing from any organized group. Polish revolutionary groups were taken by surprise and did not play a major role in the subsequent events. Around 21-22 June, following clashes with the authorities in the previous days, angry workers began building barricades and assaulting police and military patrols. Additional troops were called by the authorities, who also declared martial law. On 23 June, no businesses operated in the city, as the police and military stormed dozens of workers' barricades. Eventually, by 25 June, the uprising was crushed, with estimates of several hundred dead and wounded. The uprising was reported in the international press and widely discussed by socialist and communist activists worldwide. Unrest in Łódź would continue for many months, although without protests on such a large-scale as before.
     The Koreans waited until a large Japanese fleet had left the island for a raid. Yi Jong-mu's fleet of 227 ships and 17,285 soldiers set off from Geoje Island toward Tsushima on June 19, 1419. The following day the fleet landed in Asō Bay . General Yi Jong-mu first sent captured Japanese pirates as emissaries to ask for surrender. When he received no reply, he  sent out expeditionary forces, and the soldiers proceeded to raid the islanders and pirates and plunder pirate settlements. He found and rescued 131 Chinese captives of the pirates and 21 slaves on the island, burned 129 ships and 1,939 houses, and killed or captured 135 pirates. On the 26th day, the Korean army was ambushed on land by a Japanese army in an ambush at Nii, and suffered 150 casualties. The ambush was known to the locals as the Battle of Nukadake . In the weeks that followed, a truce was negotiated with the Sō clan on the island. The Korean expeditionary force withdrew and sailed back to the Korean Peninsula on July 3, 1419. and Korea gave up occupation of Tsushima. In subsequent diplomatic exchanges, Tsushima would be granted trading priveldges with Joseon, in exchange for maintaining control and order of pirate threats originating from the island.
@@ -34,6 +31,25 @@ function getContents_nfl() {
     At the Georgia Dome, Atlanta, Georgia The Falcons entered their Week 2 home-opener against another NFC South rival, the Tampa Bay Buccaneers.  The only Atlanta scores of the game came in the first quarter, with a 1-yard TD run on QB Michael Vick's QB sneak.  The only other Falcons score came in the second quarter, with RB Fred McCrary getting a 4-yard TD run.  The Buccaneers only score of the game came in the second quarter, with opposing kicker Matt Bryant kicking a 22-yard field goal.  The ground game made short work of the Tampa Defense, with Michael Vick and Warrick Dunn combining for 261 rushing yards. Rookie running back Jerious Norwood added 45 more rushing yards to the Falcon's total. The Falcons set a new  franchise record for rushing yards in a game with 306.  On the other side of the ball, the Falcons defense shut down the Tampa offense, with DeAngelo Hall picking off two passes and Jason Webster picking off one.  Also, they held Tampa Bay RB Carnell "Cadillac" Williams to just 37 yards on 15 carries.  Special teams struggled as kicker Michael Koenen missed three field goals and had one blocked, making him 2/8 so far this season. 
     At Cleveland Browns Stadium, Cleveland, Ohio TV Time: CBS 4:05pm eastern The Ravens traveled to Cleveland, Ohio for an AFC North match-up with the Cleveland Browns.  The Ravens struck first with kicker Matt Stover getting a 32-yard field goal.  However, in the second quarter, their small lead was wiped out, as WR Braylon Edwards caught a 58-yard TD pass and QB Charlie Frye got a one-yard TD run.  In the third quarter, both sides stiffened their defenses and prevented each other from scoring.  In the fourth quarter, down by 2 points, McNair drove down the field to set Stover up for a 52-yard field goal. With 0:29 left in the 4th quarter the field goal provided the winning points.  Steve McNair passed for 264 yards. He threw no interceptions and completed 23 passes out of 41. Jamal Lewis rushed for 86 yards. The leading receiver was Derrick Mason with 7 completions for 132 yards. The defense sacked Brown's quarterback Charlie Frye seven times. The defense also had one forced fumble and an interception. With their third straight win, the Ravens advanced to 3-0.`
     return survey_data
+}
+
+// Attach AI-answer fetch to the quest text keyup event
+function initialize_answer() {
+    var textInput = document.getElementById('input-question-' + current_q_id);
+    var timeout = null;
+
+    textInput.onkeyup = function (e) {
+        document.getElementsByClassName("wait_loop")[0].innerText = "AI is thinking ..."
+        if (document.getElementById('ai-answer-' + current_q_id)) {
+            document.getElementById('ai-answer-' + current_q_id).value = ""
+        }
+
+        clearTimeout(timeout);
+
+        timeout = setTimeout(function () {
+            invoke_bidaf_with_retries(3);
+        }, 800);
+    };
 }
 
 // Check for Bag-of-Words overlap
@@ -62,6 +78,27 @@ function reset_error() {
     parent.innerText = ""
 }
 
+//Get currently displayed question index
+function get_current_question_num() {
+    var current_question = document.getElementsByClassName("question")[0]
+    for (var child = current_question.firstChild; child !== null; child = child.nextSibling) {
+        if (child.style && child.id && child.style.display != "none") {
+            return child.id.replace("input-question-", "")
+        }
+    }
+}
+
+// Check if the current question id exists in HTML (hidden or visible)
+function check_if_question_exists(current_qnum) {
+    var blocks = document.getElementsByClassName("rectangles");
+    for (var i = 0; i < blocks.length; i++) {
+        if (blocks.item(i).id == current_qnum) {
+            return true
+        }
+    }
+    return false
+}
+
 //Get elements matching id regex
 function get_elements_by_id_starts_with(container, selector_tag, prefix) {
     var items = [];
@@ -80,154 +117,126 @@ function get_elements_by_class_starts_with(container, selector_tag, prefix) {
     var items = [];
     var candidate_el = document.getElementsByClassName(container)[0].getElementsByTagName(selector_tag);
     for (var i = 0; i < candidate_el.length; i++) {
-        if (candidate_el[i] && candidate_el[i].id.lastIndexOf(prefix, 0) === 0) {
+        //omitting undefined null check for brevity
+        if (candidate_el[i].id.lastIndexOf(prefix, 0) === 0) {
             items.push(candidate_el[i]);
         }
     }
     return items;
 }
 
-// Attach AI-answer fetch to the quest text keyup event
-function initialize_answer() {
-    how_many_check();
-
-    var timeout = null;
-        
-    clearTimeout(timeout);
-
-    timeout = setTimeout(function () {
-       // invoke_bidaf_with_retries(3);
-    }, 1000);
-}
-
-function deselect_date() {
-    var caption_row = document.getElementById("date_row_1")
-    var data_row = document.getElementById("date_row_2")
-    document.getElementById("year").value = ""
-    document.getElementById("month").value = ""
-    document.getElementById("day").value = ""
-    caption_row.style.display = 'none'
-    data_row.style.display = 'none'
-    document.getElementById("date").checked = false
-}
-
-// deselect digit type answer
-function deselect_digit() {
-    var caption_row = document.getElementById("digit_row_1")
-    var data_row = document.getElementById("digit_row_2")
-    document.getElementById("value").value= ""
-    document.getElementById("unit").value = ""
-    caption_row.style.display = 'none'
-    data_row.style.display = 'none'
-    document.getElementById("digit").checked = false
-}
-
-// deselect span type answer
-function deselect_span() {
-    var span_ind = document.getElementById("span_row").rowIndex
-    var ans_table = document.getElementById("ans_table");
-    var span_elements = get_elements_by_id_starts_with("ans_table", "input", "span-")
-
-    if (span_elements.length > 0) {
-        for (var i = 0; i < span_elements.length; i++) {
-            // remove spans
-            //span_elements[i].parentNode.parentNode.remove()
-            var mark_node = span_elements[i].parentNode.nextSibling
-            if (mark_node && (mark_node.innerText.charCodeAt().toString().includes("10004") || mark_node.innerText.charCodeAt().toString().includes("10008"))) {
-                mark_node.remove()
-            }
-            span_elements[i].value = ""
-            span_elements[i].parentNode.parentNode.style.display = "none"
+//Get visible question-id element 
+function get_visible_id() {
+    var question_el = get_elements_by_class_starts_with("question", "input", "input-question-")
+    for (var i = 0; i < question_el.length; i++) {
+        if (question_el[i].style.display != "none") {
+            return question_el[i].id.replace("input-question-","")
         }
-        document.getElementById("span").checked = false
     }
-}
-
-//disable submission button
-function disable_submission() {
-    document.getElementById("next_question").style.background = "darkgray";
-    document.getElementById("next_question").disabled = true
 }
 
 // Edit an already added QA pair
-function modify_previous_question() {
+function modify_previous_question() { 
     edit_mode = true
-    document.getElementById("next_question").innerText = "RE-SUBMIT ANSWER"
+    document.getElementById("next_passage").disabled = true
+    document.getElementById("next_passage").style.background = "darkgray";
+    document.getElementById("prev_passage").disabled = true
+    document.getElementById("prev_passage").style.background = "darkgray";
 
-   // reset_passage_buttons()
+    current_q_id = get_visible_id()
+    var question_el = document.getElementById("input-question-" + current_q_id)
+    question_el.style.display = "none";
 
-    document.getElementById("next_question").disabled = false
-    document.getElementById("next_question").style.background = "#2085bc";
+    deselect_date()
+    deselect_span()
+    deselect_digit()
 
-    current_question_id = this.id
-    var annotation  = annotations[current_question_id]
+    var question_el = document.getElementById('input-question-' + this.id)
+    question_el.style.display = "";
+    current_q_id = this.id
 
-    if (annotation.answer.checked == "date") {
+    if (document.getElementById('ai-answer-' + current_q_id))
+        document.getElementById('ai-answer-' + current_q_id).style.display = ""
+
+    if (document.getElementById("date-" + this.id)) {
         document.getElementById("date").checked = true
         document.getElementById("date_row_1").style.display = ""
-        document.getElementById("date_row_2").style.display = ""
-        document.getElementById("year").value = annotation.answer.date.year
-        document.getElementById("month").value = annotation.answer.date.month
-        document.getElementById("day").value = annotation.answer.date.day
-    } else if (annotation.answer.checked == "digit") {
+        document.getElementById("date-" + this.id).style.display = ""
+
+    } else if (document.getElementById("digit-" + this.id)) {
         document.getElementById("digit").checked = true
         document.getElementById("digit_row_1").style.display = ""
-        document.getElementById("digit_row_2").style.display = ""
-        document.getElementById("value").value = annotation.answer.digit.value
-        document.getElementById("unit").value = annotation.answer.digit.unit
-    } else if (annotation.answer.checked == "span") {
+        document.getElementById("digit-" + this.id).style.display = ""
+    //} else if (document.getElementById("no_" + this.id) && document.getElementById("yes_" + this.id).checked) {
+    //    var yes_no_ind = document.getElementById("yes_no_row").rowIndex
+    //    var ans_table = document.getElementById("ans_table");
+    //    var yes_row = ans_table.rows[yes_no_ind + 1]
+    //    var no_row = ans_table.rows[yes_no_ind + 2]
+    //    yes_row.style.display = ""
+    //    no_row.style.display = ""        
+    //    document.getElementById("yes_" + this.id).checked = true        
+    //} else if (document.getElementById("no_" + this.id) && document.getElementById("no_" + this.id).checked) {
+    //    document.getElementById("yes_no").checked = true
+    //    var yes_no_ind = document.getElementById("yes_no_row").rowIndex
+    //    var ans_table = document.getElementById("ans_table");
+    //    var yes_row = ans_table.rows[yes_no_ind + 1]
+    //    var no_row = ans_table.rows[yes_no_ind + 2]
+    //    yes_row.style.display = ""
+    //    no_row.style.display = ""
+    //    document.getElementById("no_" + this.id).checked = true
+    } else {
         document.getElementById("span").checked = true
-        var span_elements = get_elements_by_id_starts_with("ans_table", "input", "span-")
-        for (var i = 0; i < annotation.answer.spans.length; i++) {
+        var span_elements = get_elements_by_id_starts_with("ans_table", "input", "span-" + this.id)
+        for (var i = 0; i < span_elements.length; i++) {
             span_elements[i].parentNode.parentNode.style.display = ""
-            span_elements[i].value = annotation.answer.spans[i]
         }
-        var last_row = span_elements[i-1].parentNode.parentNode
-        last_row.cells[last_row.cells.length - 1].innerHTML = '<a href="add_span" onclick="return add_span(this);">&#10010;</a>';
+    }
+    
+    initialize_answer()
+    //question_el.dispatchEvent(new KeyboardEvent('keyup', { 'key': ' ' }))
+}
+
+// Delete previous digit element while modifying
+function remove_digit() {
+    var prev_digit_el = document.getElementById("digit-" + current_q_id)
+    if (prev_digit_el) {
+        prev_digit_el.remove()
+    }
+}
+
+// Delete previous date element while modifying
+function remove_date() {
+    var prev_date_el = document.getElementById("date-" + current_q_id)
+    if (prev_date_el) {
+        prev_date_el.remove()
+    }
+}
+
+// Delete previous span element while modifying
+function remove_span() {
+    var span_el = get_elements_by_id_starts_with("ans_table", "input", "span-" + current_q_id)
+    for (var i = 0; i < span_el.length; i++) {
+        span_el[i].parentNode.parentNode.remove()
     }
 
-    document.getElementById("input-question").value = annotation.question
-
-    document.getElementById('ai-answer').value = 'AI is thinking ...'
-    initialize_answer()
-    document.getElementById("input-question").dispatchEvent(new KeyboardEvent('keyup', { 'key': ' ' }))
 }
 
 // Create text for the bottom rectangle tab
-function create_text_for_tab() {
-    var answer = {
-        "date": {
-            "year": "",
-            "month": "",
-            "day": "",
-        },
-        "digit": {
-            "value": "",
-            "unit": ""
-        },
-        "spans": [],
-        "checked" : ""
-        
-    }
+function create_text_for_tab(q_num, flag_exists) {
     var empty_qa = false
     var correct_flag = true
     var duplicate_check = false
     var ai_overlap = true
-    var question_el = document.getElementById("input-question")
+    var question_el = document.getElementById("input-question" + q_num)
     if (question_el.value.trim() == "") {
         empty_qa = empty_qa || true
     }
 
     var qa_text = "Q: " + question_el.value + "\nA: "
     if (document.getElementById("date").checked) {
-        var year = document.getElementById("year").value
-        var month = document.getElementById("month").value
-        var day = document.getElementById("day").value
-        answer.date.year = year
-        answer.date.month = month
-        answer.date.day = day
-        answer.checked = "date"
-
+        var year = document.getElementById("year" + q_num).value
+        var month = document.getElementById("month" + q_num).value
+        var day = document.getElementById("day" + q_num).value
         var input_date = day + " " + month + " " + year
         input_date = input_date.trim()
         if (input_date == "") {
@@ -235,13 +244,17 @@ function create_text_for_tab() {
         }
         qa_text = qa_text + input_date
 
-        ai_overlap = bow_overlap(document.getElementById('ai-answer').value, input_date, 1.0)
-
+        if (document.getElementById('ai-answer-' + current_q_id))
+            ai_overlap = bow_overlap(document.getElementById('ai-answer-' + current_q_id).value, input_date, 1.0)
         var duplicate_check = duplicate_qa_check(qa_text)
+        if (flag_exists) {
+            remove_digit()
+            remove_span()
+        }
 
     } else if (document.getElementById("digit").checked) {
-        var dig = document.getElementById("value").value
-        var unit = document.getElementById("unit").value
+        var dig = document.getElementById("dig_answer" + q_num).value
+        var unit = document.getElementById("unit_answer" + q_num).value
         var input_number = dig + " " + unit
         var input_number = input_number.trim()
         if (dig == "") {
@@ -249,38 +262,38 @@ function create_text_for_tab() {
         }
         qa_text = qa_text + input_number
 
-        answer.digit.value = dig
-        answer.digit.unit = unit
-
-        answer.checked = "digit"
-        
-        ai_overlap = bow_overlap(document.getElementById('ai-answer').value, input_number, 1.0)
+        if (document.getElementById('ai-answer-' + current_q_id))
+            ai_overlap = bow_overlap(document.getElementById('ai-answer-' + current_q_id).value, input_number, 1.0)
 
         var duplicate_check = duplicate_qa_check(qa_text)
-        
+        if (flag_exists) {
+            remove_date()
+            remove_span()
+        }
 
     } else if (document.getElementById("span").checked) {
         var correct_flag = span_match_check()
         var i_cnt = 0
         var input_spans = ""
-        var span_elements = get_elements_by_id_starts_with("ans_table", "input", "span-")
+        var span_elements = get_elements_by_id_starts_with("ans_table", "input", "span-" + current_q_id)
         for (var i = 0; i < span_elements.length; i++) {
             if (span_elements[i].value.trim() != "") {
                 input_spans = input_spans + "[" + span_elements[i].value.trim() + "] "
-                answer.spans.push(span_elements[i].value.trim())
-            }
+            }            
         }
 
-        answer.checked = "span"
-
-        if (input_spans.trim() == "")
+        if (input_spans.trim() == "") 
             empty_qa = empty_qa || true
 
-        ai_overlap = bow_overlap(document.getElementById('ai-answer').value, input_spans, 1.0)
+        if (document.getElementById('ai-answer-' + current_q_id))
+            ai_overlap = bow_overlap(document.getElementById('ai-answer-' + current_q_id).value, input_spans, 1.0)
 
         qa_text = qa_text + input_spans
         var duplicate_check = duplicate_qa_check(qa_text)
-        
+        if (flag_exists) {
+            remove_date()
+            remove_digit()
+        }
     } else {
         empty_qa = empty_qa || true
     }
@@ -290,35 +303,35 @@ function create_text_for_tab() {
         "ai_overlap": ai_overlap,
         "empty_qa": empty_qa,
         "correct_text": correct_flag,
-        "duplicate_check": duplicate_check,
-        "annotation" : answer
+        "duplicate_check": duplicate_check
     }
 }
 
 //Submit the question 
 function create_question() {
+    hasMarks = true
+    reset_error()
     var correct_flag = new Boolean(true)
+    
+    var current_qnum = get_current_question_num()
+    var flag_exists = check_if_question_exists(current_qnum)
 
     // get query if for current or previously added question
-    if (!edit_mode) {
-        current_question_id = (record_count - 1) + "-" + question_num
+    var q_num = "-"
+    if (flag_exists) {
+        q_num = q_num + current_qnum
+    } else {
+        q_num = q_num + (record_count - 1) + "-" + question_num
     }
-
-    var annotation = { question: "", answer: "" }
-
-    annotation.question = document.getElementById("input-question").value
-
+    var question_el = document.getElementById("input-question" + q_num)
+  
     //create the text for the bottom rectangle container containing QA pair 
-    var result = create_text_for_tab(edit_mode)
+    var result = create_text_for_tab(q_num, flag_exists)
     var qa_text = result.qa_text
     var ai_overlap = result.ai_overlap
     var empty_qa = result.empty_qa
     var correct_flag = result.correct_text
     var duplicate_check = result.duplicate_check
-    var answer = result.annotation
-
-    annotation.answer = answer
-    annotations[current_question_id] = annotation
 
     var tab_container = document.getElementsByClassName("horizontal-scroll-wrapper")[0]
 
@@ -326,7 +339,7 @@ function create_question() {
     if (correct_flag && ai_overlap && !empty_qa && !duplicate_check) {
 
         // Create the bottom tab container if its a new questionand question is new add it
-        if (!edit_mode) {
+        if (!flag_exists) {
             var new_tab = document.createElement("div");
             new_tab.className = 'rectangles'
             new_tab.id = (record_count - 1) + '-' + question_num
@@ -335,16 +348,30 @@ function create_question() {
             tab_container.appendChild(new_tab);
             question_num = question_num + 1
             total_question_cnt = total_question_cnt + 1
-            document.getElementsByClassName("passage_num")[0].innerText = "Passage: " + (record_count) + "/" + passages.length + " Questions: " + (total_question_cnt)
-            
+            document.getElementsByClassName("passage_num")[0].innerText = "Passage: " + (record_count) + "/" + passages.length + " Questions: " + (total_question_cnt) 
             // else just modify the text
         } else {
-            var curr_tab = document.getElementById(current_question_id);
+            var curr_tab = document.getElementById(current_qnum);
             curr_tab.innerText = qa_text
-            document.getElementById("input-question").value = ""
-           
+            question_el.style.display = "none"
         }
+
+        // reset answer containers
+        deselect_date()
+        deselect_digit()
+        deselect_span()
+        deselect_ai()
+
         
+        // Create new question text for next question
+        create_input_question(record_count - 1, false)
+        hasMarks = false
+
+        if ((record_count == passages.length) && (total_question_cnt < 10)) {
+            document.getElementById("submitButton").value = "Must write" + (10 - total_question_cnt) + "more questions to submit"
+        } else {
+            document.getElementById("submitButton").value = "Submit HIT"
+        }
 
     } else if (!correct_flag) {
         var parent = document.getElementsByClassName("error_panel")[0]
@@ -362,36 +389,37 @@ function create_question() {
     } else if (duplicate_check) {
         var parent = document.getElementsByClassName("error_panel")[0]
         parent.innerText = "Same question-answer pair has alreday been added.  Please try a different question."
+    } else if ((record_count == passages.length) && (total_question_cnt < 10)) {
+        var parent = document.getElementsByClassName("error_panel")[0]
+        parent.innerText = "We have reached the last passage and we need a total of 10 questions. Please write " + (10 - total_question_cnt) + " more questions to submit the HIT."
     } else {
         var parent = document.getElementsByClassName("error_panel")[0]
         parent.innerText = "Something wrong with the answer please try a differenet question."
     }
-    reset()  
-    check_question_count()
-}
-
-function reset() {
-    document.getElementById("input-question").value = ""
-    document.getElementById("ai-answer").value = ""
-    deselect_date()
-    deselect_digit()
-    deselect_span()
-
-    reset_error()
-    disable_submission()
     if (edit_mode) {
-        document.getElementById("next_question").innerText = "ADD ANSWER"
-
-        reset_passage_buttons()
+        document.getElementById("next_passage").style.background = "#2085bc"
+        document.getElementById("next_passage").disabled = false
+        document.getElementById("prev_passage").style.background = "#2085bc"
+        document.getElementById("prev_passage").disabled = false
         edit_mode = false
     }
+    check_question_count()
 }
 
 // Run span checks on hover 
 function run_validations_span() {
+    hasMarks = true
     reset_error()
+    var current_qnum = get_current_question_num()
+    var flag_exists = check_if_question_exists(current_qnum)
+    var q_num = "-"
+    if (flag_exists) {
+        q_num = q_num + current_qnum
+    } else {
+        q_num = q_num + (record_count - 1) + "-" + question_num
+    }
 
-    var result = create_text_for_tab()
+    var result = create_text_for_tab(q_num, flag_exists)
     var qa_text = result.qa_text
     var ai_overlap = result.ai_overlap
     var empty_qa = result.empty_qa
@@ -401,6 +429,7 @@ function run_validations_span() {
     if (correct_flag && ai_overlap && !empty_qa && !duplicate_check) {
         document.getElementById("next_question").style.background = "#2085bc";
         document.getElementById("next_question").disabled = false
+        document.getElementById("next_question").onclick = create_question
     }
     else if (!correct_flag) {
         document.getElementById("next_question").style.background = "darkgray";
@@ -435,19 +464,28 @@ function run_validations_span() {
 
 // Run date and digit checks on hover 
 function run_validations_date_digit() {
+    hasMarks = true
     reset_error()
+    var current_qnum = get_current_question_num()
+    var flag_exists = check_if_question_exists(current_qnum)
+    var q_num = "-"
+    if (flag_exists) {
+        q_num = q_num + current_qnum
+    } else {
+        q_num = q_num + (record_count - 1) + "-" + question_num
+    }
 
-    var result = create_text_for_tab()
+    var result = create_text_for_tab(q_num, flag_exists)
     var qa_text = result.qa_text
     var ai_overlap = result.ai_overlap
     var empty_qa = result.empty_qa
     var correct_flag = result.correct_text
-    var duplicate_check = result.duplicate_check    
-   
+    var duplicate_check = result.duplicate_check
+
     if (ai_overlap && !empty_qa && !duplicate_check) {
         document.getElementById("next_question").disabled = false
         document.getElementById("next_question").style.background = "#2085bc";
-       
+        document.getElementById("next_question").onclick = create_question
     } else if (empty_qa) {
         document.getElementById("next_question").style.background = "darkgray";
         document.getElementById("next_question").disabled = true
@@ -475,7 +513,7 @@ function duplicate_qa_check(cand_text) {
     cand_text = cand_text.toLowerCase().trim()
     var qa_list = document.getElementsByClassName("rectangles")
     for (var i = 0; i < qa_list.length; i++) {
-        if (cand_text == qa_list[i].innerText.toLowerCase().trim() && qa_list[i].id != current_question_id) {
+        if (cand_text == qa_list[i].innerText.toLowerCase().trim() && qa_list[i].id != current_q_id) {
             return true
         }
     }
@@ -484,13 +522,10 @@ function duplicate_qa_check(cand_text) {
 
 // Check for 'how many' string in question
 function how_many_check() {
-    var unit_el = document.getElementById("unit")
-    var question_el = document.getElementById("input-question")
+    var unit_el = document.getElementById("unit_answer-" + current_q_id)
+    var question_el = document.getElementById("input-question-" + current_q_id)
     if (question_el.value.toLowerCase().includes("how many") == true) {
         unit_el.disabled = true
-    } else {
-        unit_el.value = ""
-        unit_el.disabled = false
     }
 }
 
@@ -499,29 +534,32 @@ function span_match_check() {
     var correct_flag = new Boolean(true);
     if (document.getElementById("span").checked) {
         var span_ind = document.getElementById("span_row").rowIndex
-        var ans_table = document.getElementById("ans_table");
+        var ans_table = document.getElementById("ans_table");        
         var span_values = get_last_span()
-        var span_count = parseInt(span_values.last_span_tokens[span_values.last_span_tokens.length - 1], 10) + 1
-        var count = 0
-        for (var i = span_ind + 1; i < ans_table.rows.length; i++) {
-            var span_id = "span-" + count
-             if (document.getElementById(span_id)) {
+        var span_count = parseInt(span_values.last_span_tokens[span_values.last_span_tokens.length - 1], 10) + 2
+        //for (var i = span_ind + 1; i < span_count; i++) {
+        var i = span_ind + 1
+        while (true) {
+            var span_id = "span-" + current_q_id + "-" + (i - 1)
+            if (!ans_table.rows[i].cells[0].innerHTML.trim().includes('id="span-')) {
+                break
+            }  else if (document.getElementById(span_id)) {
                 var span_value = document.getElementById(span_id).value
                 var cur_span_row = document.getElementById(span_id).parentNode.parentNode
                 var passage_str = document.getElementsByClassName("passage-" + record_count)[0].innerText
                 var pattern = new RegExp(span_value);
-                 if (pattern.test(passage_str) && span_value!= "") {
+                if (pattern.test(passage_str)) {
                     if ((cur_span_row.cells.length == 2) ||
-                        (span_count == i) && (cur_span_row.cells.length == 2)) {
+                        ((span_count - 1 == i) && (cur_span_row.cells.length == 2))) {
                         var marker = cur_span_row.insertCell(1)
                         marker.innerHTML = '<p style="color: green;">&#10004;</p>'
                     } else {
                         var marker = cur_span_row.cells[1]
                         marker.innerHTML = '<p style="color: green;">&#10004;</p>'
                     }
-                 } else if (span_value != "") {
+                } else {
                     if ((cur_span_row.cells.length == 1) ||
-                        (span_count == i) && (cur_span_row.cells.length == 2)) {
+                        ((span_count - 1 == i) && (cur_span_row.cells.length == 2))) {
                         var marker = cur_span_row.insertCell(1)
                         marker.innerHTML = '<p style="color: red;">&#10008;</p>'
                     } else {
@@ -531,7 +569,8 @@ function span_match_check() {
                     correct_flag = correct_flag && false
                 }
             }
-            count = count + 1
+           
+            i = i+1
         }
     }
     return correct_flag;
@@ -791,59 +830,151 @@ function highlight_q8_nfl() {
     reset_class(q_span, "ans_span14_high")
 }
 
+// event on hover over on annotated question
+function highlight_q7_nfl() {
+    var parent = document.getElementsByClassName("passage-sample")[0];
+    var q_span = parent.getElementsByClassName("ans_span12");
+    reset_class(q_span, "ans_span12_high")
+}
+
 // add element for date type answer
 function create_input_date() {
-    var caption_row = document.getElementById("date_row_1")
-    var data_row = document.getElementById("date_row_2")
+    var a_num = current_q_id
     if (document.getElementById("date").checked) {
+        var ans_table = document.getElementById("ans_table");
+        var date_ind = document.getElementById("date_row").rowIndex
+        var caption_row = document.getElementById("date_row_1")
         caption_row.style.display = ''
-        data_row.style.display = ''
-    } 
+
+        var input_row = ans_table.insertRow(date_ind + 2)
+        input_row.id = "date-" + a_num
+        var year_row = input_row.insertCell(0)
+        year_row.innerHTML = '<input type="number" id="year-' + a_num + '" name="year-' +
+            a_num + '" min="1" max="3000">'
+        document.getElementById("year-" + a_num).onkeyup = run_validations_date_digit
+        var month_row = input_row.insertCell(1)
+        month_row.innerHTML = '<select id="month-' + a_num + '" name="month-' + a_num +
+            '"><option></option><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select>'
+        document.getElementById("month-" + a_num).onkeyup = run_validations_date_digit
+        var day_row = input_row.insertCell(2)
+        day_row.innerHTML = '<input type="number" id="day-' + a_num + '" name="day-' +
+            a_num + '" min="1" max="31">'
+        document.getElementById("day-" + a_num).onkeyup = run_validations_date_digit
+        
+    }   
     deselect_digit()
     deselect_span()
+    remove_digit()
+    remove_span()
 }
 
 // add element for digit type answer
 function create_input_digit() {
+    var q_id = current_q_id
     if (document.getElementById("digit").checked) {
+        var dig_ind = document.getElementById("digit_row").rowIndex
+        var ans_table = document.getElementById("ans_table");
         var caption_row = document.getElementById("digit_row_1")
-        var data_row = document.getElementById("digit_row_2")
-        caption_row.style.display = ''        
-        data_row.style.display = ''        
-    } 
+        caption_row.style.display = ''
+
+        var input_row = ans_table.insertRow(dig_ind + 2)
+        input_row.id = "digit-" + q_id
+        var value_row = input_row.insertCell(0)
+        value_row.innerHTML = '<input name="dig_answer-' + q_id
+            + '" id="dig_answer-' + q_id + '" rows="1" type="number">'
+        document.getElementById("dig_answer-" + q_id).onkeyup = run_validations_date_digit
+        var unit_row = input_row.insertCell(1)
+        unit_row.innerHTML = '<input name="unit_answer-' + q_id
+            + '" id="unit_answer-' + q_id + '" rows="1" type="text">'
+
+        how_many_check();
+        //attach_on_enter('dig_answer-' + q_id)
+        //attach_on_enter('unit_answer-' + q_id)
+        
+    }
     deselect_date()
     deselect_span()
+    remove_span()
+    remove_date()
 }
 
-function create_tabs(prefix) {
-    var rectangle_containers = []
-    for (var key in annotations) {
-        if (key.lastIndexOf(prefix, 0) == 0) {
-            rectangle_containers.push(annotations[key])
+function deselect_ai() {
+    if (document.getElementById('ai-answer-' + current_q_id))
+        document.getElementById('ai-answer-' + current_q_id).style.display = "none"
+    document.getElementsByClassName("wait_loop")[0].innerText = ""
+}
+
+// deselect date type answer
+function deselect_date() {
+        var date_ind = document.getElementById("date_row").rowIndex
+        var ans_table = document.getElementById("ans_table");
+        if (document.getElementById("date-" + current_q_id)) {
+            var caption_row = document.getElementById("date_row_1")
+            caption_row.style.display = 'none'
+            document.getElementById("date-" + current_q_id).style.display = 'none'
         }
+        document.getElementById("date").checked = false
+}
+
+// deselect digit type answer
+function deselect_digit() {
+        var dig_ind = document.getElementById("digit_row").rowIndex
+        var ans_table = document.getElementById("ans_table");
+        if (document.getElementById("digit-" + current_q_id)) {
+            var caption_row = document.getElementById("digit_row_1")
+            caption_row.style.display = 'none'
+            document.getElementById("digit-" + current_q_id).style.display = 'none'
+        }
+        document.getElementById("digit").checked = false 
+}
+
+// deselect span type answer
+function deselect_span() {
+    var span_ind = document.getElementById("span_row").rowIndex
+    var ans_table = document.getElementById("ans_table");
+    var span_elements = get_elements_by_id_starts_with("ans_table", "input", "span-" + current_q_id)
+
+    if (span_elements.length > 0) {
+        for (var i = 0; i < span_elements.length; i++) {
+            // remove tick marks
+            var mark_node = span_elements[i].parentNode.nextSibling
+            if (mark_node && (mark_node.innerText.charCodeAt().toString().includes("10004") || mark_node.innerText.charCodeAt().toString().includes("10008") )) {
+                mark_node.remove()
+            }
+            span_elements[i].parentNode.parentNode.style.display = "none"
+        }
+        document.getElementById("span").checked = false
     }
+}
 
-
+// add a question element for each new question
+function create_input_question(cnt, reset_qnum, config) {
+    var question_wrapper = document.getElementsByClassName('question')[0]
+    var question_input = document.createElement("input");
+    question_input.type = "text"
+    question_wrapper.appendChild(question_input)
+   
+    initialize_answer()
 }
 
 // switch between next and previous passages
-function populate_passage(config) {    
+function populate_passage(config) {  
+    deselect_span()
+    deselect_date()
+    deselect_digit()
+    deselect_ai()
+    
+    create_input_question(record_count, true, config)
     if (record_count <= passages.length) {
         var parent = document.getElementsByClassName("passage")[0];
         var passage_el = document.getElementsByClassName("passage-" + record_count)[0];
         passage_el.remove();
-        reset_tabs()
-
-        if (config == "next") {            
+        if (config == "next") {
             record_count = record_count + 1;
-            
-        } else {            
+        } else {
             record_count = record_count - 1;
         }
-        var rect_el = get_elements_by_class_starts_with("horizontal-scroll-wrapper", "div", (record_count - 1) + "-")
-        question_num = rect_el.length
-
-        document.getElementsByClassName("passage_num")[0].innerText = "Passage: " + (record_count) + "/" + passages.length + " Questions: " + (total_question_cnt)
+        document.getElementsByClassName("passage_num")[0].innerText = "Passage: " + (record_count) + "/" + passages.length + " Questions: " + (total_question_cnt) 
         var new_passage = document.createElement("div");
         new_passage.innerText = passages[record_count - 1];
         new_passage.className = "passage-" + record_count;
@@ -853,75 +984,121 @@ function populate_passage(config) {
 
         var i = 0
         while (true) {
-            var tab_qa = document.getElementById((record_count-1) + "-" + i)
+            if (config == "next") {
+                var tab_qa = document.getElementById((record_count - 2) + "-" + i)
+            } else {
+                var tab_qa = document.getElementById((record_count) + "-" + i)
+            }
             if (!tab_qa) break;
             else {
-                tab_qa.style.display = ""
-                i = i + 1
+                tab_qa.style.display = "none"
+                i = i+1
             }
         }
+
+       
     }
-    reset_passage_buttons()
-
-    
-    current_question_id = (record_count - 1) + "-" + question_num
-    initialize_answer()
-    reset()
-    
-
-}
-
-function reset_passage_buttons() {
     if (record_count <= 1) {
-        document.getElementById("prev_passage").style.background = "darkgray"
-        document.getElementById("prev_passage").disabled = true
+        document.getElementById("prev_passage").style.display = "none"
+        document.getElementById("next_passage").style.display = ""
+        document.getElementById("submitButton").style.display = "none"
     } else if (record_count == passages.length) {
-        document.getElementById("next_passage").style.background = "darkgray"
-        document.getElementById("next_passage").disabled = true
+        document.getElementById("prev_passage").style.display = ""
+        document.getElementById("next_passage").style.display = "none"
+        var submit_btn = document.getElementById("submitButton");
+        submit_btn.style.display = ""
     } else {
-        document.getElementById("next_passage").disabled = false
-        document.getElementById("prev_passage").disabled = false
-        document.getElementById("prev_passage").style.background = "#2085bc"
-        document.getElementById("next_passage").style.background = "#2085bc"
+        document.getElementById("submitButton").style.display = "none"
+        document.getElementById("prev_passage").style.display = ""
+        document.getElementById("next_passage").style.display = ""
     }
+    
 }
 
 // Reset element when previous passages control is selected
-function reset_tabs() {
-    var rectange_el = get_elements_by_class_starts_with("horizontal-scroll-wrapper", "div", (record_count-1) + "-")
+function reset_tabs(cnt) {
+    var rectange_el = get_elements_by_class_starts_with("horizontal-scroll-wrapper", "div",  cnt+"-")
     for (var i = 0; i < rectange_el.length; i++) {
-        rectange_el[i].style.display = "none"
+        rectange_el[i].style.display = ""
     }
+    question_num = rectange_el.length
 }
 
+//Query BIDAF server
+function invoke_bidaf() {
+    var r = {
+        passage: document.getElementsByClassName('passage-' + record_count)[0].innerText,
+        question: document.getElementById('input-question-' + current_q_id).value
+    };
+    fetch("https://sparc-bidaf-server.dev.allenai.org/predict", {
+    //fetch("http://demo.allennlp.org/predict/machine-comprehension", {
+        method: "POST",
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(r)
+    }).then(
+        function (response) {
+            if (response.status !== 200) {
+                console.log('Looks like there was a problem. Status Code: ' +
+                    response.status);
+                document.getElementsByClassName("wait_loop")[0].innerText = ""
+                return;
+            }
+
+            // Examine the text in the response
+            response.json().then(function (data) {
+                document.getElementById('ai-answer-' + current_q_id).value = data["best_span_str"]
+                document.getElementsByClassName("wait_loop")[0].innerText = ""
+                return;
+            });
+        }
+    ).catch(function (err) {
+        console.log('Fetch Error :-S', err);
+        document.getElementsByClassName("wait_loop")[0].innerText = ""
+    });
+}
 
 function resolve_response(response) {
     if (response.status !== 200) {
         console.log('Looks like there was a problem. Status Code: ' +
             response.status);
-        document.getElementById('ai-answer').value = ""
+        document.getElementsByClassName("wait_loop")[0].innerText = ""
         return;
     }
 
     // Examine the text in the response
     response.json().then(function (data) {
         var ai_answer_container = document.getElementsByClassName("ai_answer")[0]
-        var ai_input = document.getElementById('ai-answer')
-        ai_input.value = data["best_span_str"]
+        if (document.getElementById('ai-answer-' + current_q_id)) {
+            var ai_input = document.getElementById('ai-answer-' + current_q_id)
+            ai_input.value = data["best_span_str"]
+        } else {
+            var ai_input = document.createElement('input')
+            ai_input.id = 'ai-answer-' + current_q_id
+            ai_input.type = "text";
+            ai_input.readOnly = true;
+            ai_input.style.textAlign = "center"
+            ai_input.style.backgroundColor = '#ef83a0'
+            ai_input.value = data["best_span_str"]
+            document.getElementsByClassName("wait_loop")[0].innerText = ""
+            ai_answer_container.append(ai_input)
+        }
         return;
     });
 
 }
 
 function error_response() {
-    document.getElementsByClassName("ai-answer").value = "Error while fetching AI answer"
+    console.log('Fetch Error :-S', err);
+    document.getElementsByClassName("wait_loop")[0].innerText = ""
 }
 
 function invoke_bidaf_with_retries(n) {
-    document.getElementsByClassName("ai-answer").value = "AI is thinking ..."
     var r = {
         passage: document.getElementsByClassName('passage-' + record_count)[0].innerText,
-        question: document.getElementById('input-question').value
+        question: document.getElementById('input-question-' + current_q_id).value
     };
     return new Promise(function (resolve, reject) {
         fetch("https://sparc-bidaf-server.dev.allenai.org/predict", {
@@ -931,7 +1108,7 @@ function invoke_bidaf_with_retries(n) {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(r)
-        }).then(resolve_response) 
+        }).then(resolve_response) // <--- Much cleaner!
             .catch(function (error) {
                 if (n === 1) return reject(error_response);
                 invoke_bidaf_with_retries(n - 1)
@@ -943,7 +1120,7 @@ function invoke_bidaf_with_retries(n) {
 
 // Get the modt recently added span
 function get_last_span() {
-    var span_elements = get_elements_by_id_starts_with("ans_table", "input", "span-")
+    var span_elements = get_elements_by_id_starts_with("ans_table", "input", "span-" + current_q_id)
     if (span_elements.length == 0) return null;
     var last_span_id = span_elements[span_elements.length - 1].id
     var last_span_tokens = span_elements[span_elements.length - 1].id.split("-")
@@ -961,31 +1138,58 @@ function delete_span(el) {
 }
 
 // Add a new answer span
-function add_span(el) {
-    deselect_digit()
-    deselect_date()
-      
-    var ans_table = document.getElementById("ans_table");
-    var span_index = el.parentNode.parentNode.rowIndex
-    var span_row_start_index = document.getElementById("span_row").rowIndex
+function add_span(el) {    
+    var span_values = get_last_span()
+    if (span_values == null && document.getElementById("span").checked) {
+        var span_ind = document.getElementById("span_row").rowIndex
+        var ans_table = document.getElementById("ans_table");
+        var add_row = ans_table.insertRow(span_ind + 1)
+        var row_text = add_row.insertCell(0)
+        row_text.innerHTML = ' <input type="text" placeholder="copy text from passage here" id="span-' + current_q_id + "-0" + '" name="span-' + current_q_id + "-0" + '">'    
+        
+        var row_add_link = add_row.insertCell(1)
+        row_add_link.innerHTML = ' <a href="add_span" onclick="return add_span(this);">&#10010;</a>'
 
-    if (!document.getElementById("span-" + span_count)) {
-        var span_count = span_index - span_row_start_index
-        var new_row = ans_table.insertRow(span_index + 1)
-        var new_cell = new_row.insertCell(0)
-        new_cell.innerHTML = '<input type="text" placeholder="copy text from passage here" id="span-' + span_count + '" name="span-' + span_count + '">';
-        var new_ref = new_row.insertCell(1)
-        new_ref.innerHTML = '<a href="add_span" onclick="return add_span(this);">&#10010;</a>'
+        document.getElementById("span-" + current_q_id + "-0").onkeyup = run_validations_span
     
-        if (span_count >= 1) {
+        deselect_date()
+        deselect_digit()
+        remove_date()
+        remove_digit()
+
+    }
+    else { 
+        var span_count = parseInt(span_values.last_span_tokens[span_values.last_span_tokens.length-1],10) + 2
+        var ans_table = document.getElementById("ans_table");
+        var spanIndex = el.parentNode.parentNode.rowIndex
+        var new_row = ans_table.insertRow(spanIndex+1)
+        var new_cell = new_row.insertCell(0)
+        new_cell.innerHTML = ' <input type="text" placeholder="copy text from passage here" id="span-' + current_q_id + "-" + (span_count - 1) + '" name="span-' + current_q_id + "-" + (span_count - 1) + '">';
+        var hasMarks = (document.getElementById(span_values.last_span_id).parentNode.parentNode.cells.length == 3);
+        
+        if (!hasMarks) {
+            var add_span_link = document.getElementById(span_values.last_span_id).parentNode.nextSibling
+            var new_ref = new_row.insertCell(1)
+            new_ref.innerHTML = '<a href="add_span" onclick="return add_span(this);">&#10010;</a>'
+            if (add_span_link)
+                add_span_link.remove()
             var prev_row = ans_table.rows[new_row.rowIndex - 1]
-            var row_sub_link = prev_row.cells[prev_row.cells.length-1]
+            var row_sub_link = prev_row.insertCell(1)
             row_sub_link.innerHTML = ' <a href="delete_span" onclick="return delete_span(this);">&#9473;</a>'
         }
-   
-        document.getElementById("span-" + span_count).onkeyup = run_validations_span
-    }
-    
+        else {
+            var add_span_link = document.getElementById(span_values.last_span_id).parentNode.nextSibling.nextSibling
+            var new_ref = new_row.insertCell(1)
+            new_ref.innerHTML = '<a href="add_span" onclick="return add_span(this);">&#10010;</a>'
+            if (add_span_link)
+                add_span_link.remove()
+            var prev_row = ans_table.rows[new_row.rowIndex - 1]
+            var row_sub_link = prev_row.insertCell(2)
+            row_sub_link.innerHTML = ' <a href="delete_span" onclick="return delete_span(this);">&#9473;</a>'
+        }
+                
+        document.getElementById("span-" + current_q_id + "-" + (span_count - 1)).onkeyup = run_validations_span
+    } 
     return false;
 }
 
@@ -1000,87 +1204,4 @@ function collapse() {
         document.getElementById("collapse_link").innerText = "(Click to expand)"
     }
     return false;
-}
-
-function check_question_count() {
-    if (total_question_cnt < min_questions) {
-        document.getElementById("ready_submit").title = "Must write " + (min_questions - total_question_cnt) + " more questions to submit"
-       // document.getElementById("next_question").style.background = "darkgray"
-    } else {
-        document.getElementById("ready_submit").title = ""
-        document.getElementById("ready_submit").disable = false
-        document.getElementById("ready_submit").style.background = "#2085bc";
-        document.getElementById("ready_submit").value = "Ready to Submit"
-    }
-}
-
-function final_submit() {
-    var root = document.getElementById("root")
-    for (var key in annotations) {
-        var answer = annotations[key].answer
-        var question_el = document.createElement("input")
-        question_el.value = annotations[key].question
-        question_el.id = "input-question-" + key
-        question_el.name = "input-question-" + key
-        question_el.type= "text"
-        question_el.style.display = 'none'
-        root.appendChild(question_el)
-
-        if (annotations[key].answer.checked == "span") {
-            for (var i = 0; i < annotations[key].answer.spans.length; i++) {
-                var span_el = document.createElement("input")
-                span_el.id = "span-" + key + "-" + i
-                span_el.name = "span-" + key + "-" + i
-                span_el.type = "text"
-                span_el.value = annotations[key].answer.spans[i]
-                span_el.style.display = 'none'
-                root.appendChild(span_el)
-            }            
-        } else if (annotations[key].answer.checked == "date") {
-            var year_el = document.createElement("input")
-            year_el.type = "number"
-            year_el.id = "year-" + key
-            year_el.name = "year-" + key
-            year_el.value = annotations[key].answer.date.year
-            year_el.style.display = 'none'
-            root.appendChild(year_el)
-
-            var month_el = document.createElement("input")
-            month_el.type = "number"
-            month_el.id = "month-" + key
-            month_el.name = "month-" + key
-            month_el.value = annotations[key].answer.date.month
-            month_el.style.display = 'none'
-            root.appendChild(month_el)
-
-            var day_el = document.createElement("input")
-            day_el.type = "number"
-            day_el.id = "day-" + key
-            day_el.name = "day-" + key
-            day_el.value = annotations[key].answer.date.day
-            day_el.style.display = 'none'
-            root.appendChild(day_el)
-
-        } else if (annotations[key].answer.checked == "digit") {
-            var value_el = document.createElement("input")
-            value_el.type = "number"
-            value_el.id = "value-" + key
-            value_el.name = "value-" + key
-            value_el.value = annotations[key].answer.digit.value
-            value_el.style.display = 'none'
-            root.appendChild(value_el)
-
-            var unit_el = document.createElement("input")
-            unit_el.type = "number"
-            unit_el.id = "unit-" + key
-            unit_el.name = "unit-" + key
-            unit_el.value = annotations[key].answer.digit.unit
-            unit_el.style.display = 'none'
-            root.appendChild(unit_el)
-        }
-
-    }
-    document.getElementById("root").style.display = "none"
-    document.getElementById("submission").style.display = ""
-    submitButton.style.display = ""
 }

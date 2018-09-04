@@ -1,9 +1,4 @@
-﻿/*********************************
-Unminified compiled Less output
-*********************************/
-
-
-
+﻿
 * {
     font-family: 'Source Sans Pro', sans-serif;
     color: #232323;
@@ -53,6 +48,7 @@ h4 {
 
 #ai-answer {
     background-color: lightcoral;
+    /*#D2B4DE;*/
     text-align: center;
     display: block
 }
@@ -69,7 +65,8 @@ h4 {
 
 .question {
     line-height: 2em;
-    font-size: 2em
+    font-size: 2em;
+    width: 100%
 }
 
 .panel {
@@ -112,10 +109,11 @@ h4 {
     font-size: 28px;
 }
 
-.horizontal-scroll-wrapper {
-    display: block;
+/*.horizontal-scroll-wrapper {
+    display: grid;
     max-width: 800px;
-    /*white-space: nowrap;*/
+    min-height: 50px;
+    /*white-space: nowrap;
     overflow: auto;
     display: flex;
 }
@@ -124,7 +122,6 @@ h4 {
     min-width: 140px;
     height: 40px;
     background-color: #cab;
-    display: block;
     margin: 5px;
     font-size: 11px;
     word-wrap: break-word;
@@ -135,6 +132,59 @@ h4 {
     border: solid darkred;
 }
 
+.horizontal-scroll-wrapper {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 10px;
+}*/
+
+.horizontal-scroll-wrapper > div {
+    border: 2px solid #ffa94d;
+    border-radius: 5px;
+    background-color: #ffd8a8;
+    padding: 1em;
+    color: #d9480f;
+}
+
+.horizontal-scroll-wrapper {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 10px;
+}
+
+.rectangles {
+    
+    min-height: 50px;
+    font-size: 12px;
+    background-color: #cab;
+    text-align: center;
+}
+
+.rectangles:hover {
+    border: solid darkred;
+    font-weight: bold
+}
+
+.notes-wrapper {
+    max-width: 1600px;
+    overflow-y: auto;
+    display: flex;
+}
+
+.note {
+    min-width: 270px;
+    min-height: 30px;
+    background-color: #ffa94d;
+    display: block;
+    margin: 5px;
+    font-size: 19px;
+    display: inline-block;
+    text-align: center
+}
+
+.note:hover {
+    font-weight: bold;
+}
 
 .qapairs {
     top: 10px;
@@ -151,7 +201,6 @@ h4 {
     outline: 1px solid grey;
 
 }
-
 
 .btn {
     float: left;
@@ -177,7 +226,7 @@ h4 {
     text-decoration: none;
     cursor: pointer;
     text-transform: uppercase;
-    font-size: 1em;
+    font-size: 0.75em;
     margin-right: 5px;
     margin-bottom: 10px;
     -moz-appearance: none;
@@ -185,13 +234,11 @@ h4 {
     border: none;
     color: #fff !important;
     display: block;
-    background: darkgrey;
+    background: darkgray;
     padding: .9375em 1.625em;
     -webkit-transition: background-color .2s ease, opacity .2s ease;
     transition: background-color .2s ease, opacity .2s ease
 }
-
-
 
 .ans_span {
     display: inline;
@@ -216,6 +263,9 @@ h4 {
     width: 50%;
 }
 
+#bottomrow {
+    float: left;
+}
 
 #wrapper {
     display: flex;
@@ -392,11 +442,18 @@ select {
     font-size: 16px
 }
 
-.wait_loop {
-    font-size: 16px;
-    text-align: center;
-}
+
 
 .query:hover {
     border: solid 2px darkred;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+    font-weight: bold;
+    color: blue;
 }

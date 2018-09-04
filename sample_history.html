@@ -12,124 +12,148 @@
         <input type='hidden' value='' name='assignmentId' id='assignmentId' />
         <div id="root">
             <h2>Complex question answering with high-level reasoning and inference</h2>
-            <a href="collapse" onclick="return collapse();" id="collapse_link">(Click to collapse)</a>
+            <a href="collapse" onclick="return collapse();" id="collapse_link"><u>(Click to collapse)</u></a>
             <div class="annotated">
-              <div>
-                <p>
-                    This task involves creating questions and answers from a given passage that involve some kind of complex reasoning.
-                    The answer to the question can be words from the passage, dates, or numbers.  The most important point is that the
-                    questions require looking at more than one part of the passage to answer.  We will make sure that the questions are
-                    sufficiently complex by running a simple question answering system on your question; if the system gets the answer
-                    right, the question is too easy.  The more you create challenging questions, the more you earn.
-                </p>
-                <p>
-                    Below, we provide some example questions that involve different kinds of reasoning.  Try to use a variety of
-                    reasoning types in the questions you come up with, and also have a variety of answer types (spans, numbers, dates).
-                </p>
-              </div>
-              <div align="left">
-                  <h4>
-                      <b>Example questions</b>
-                  </h4>
-                  <p style="text-align:center">Move your mouse over a question to highlight the part of the passage that answers the question.</p>
-              </div>
+                <div>
+                    <p>
+                        This task involves creating questions and answers from a given passage that involve some kind of complex reasoning.
+                        The answer to the question can be words from the passage, dates, or numbers.  The most important point is that the
+                        questions require looking at more than one part of the passage to answer.  We will make sure that the questions are
+                        sufficiently complex by running a simple question answering system on your question; if the system gets the answer
+                        right, the question is too easy.  The more you create challenging questions, the more you earn.
+                    </p>
+                    <p>
+                        Below, we provide some example questions that involve different kinds of reasoning.  Try to use a variety of
+                        reasoning types in the questions you come up with, and also have a variety of answer types (spans, numbers, dates).
+                        A <b><i>span</i></b> is a continuous phrase taken directly from the passage. You can directly copy-paste the text from the
+                        passage into span box. If you find multiple spans, please use the '+/-' button to add/remove. A <b><i>number</i></b> type
+                        answer can include a digit  specifying an actual value and an associated unit like year, yards and cms etc. If a question is
+                        a <i>"how many"</i> type question (for eg., How many years did the war last?), the units will be disabled. A <b><i>date</i></b> type
+                        answer can be used to specify a date with the help of a date selector.
+                    </p>
+                </div>
+                <div align="left">
+                    <h4>
+                        <b>Example questions</b>
+                    </h4>
+                    <p style="text-align:center">Move your mouse over a question to highlight the part of the passage that answers the question.</p>
+                </div>
 
-              <div class="left_panel">
-                  <h2>Passage</h2>
-                  <div class="passage-sample">
-                      Austria-Hungary precipitated the <span class="ans_span1">Bosnian crisis of 1908-1909</span>
-                      by <span class="ans_span8">officially annexing the former Ottoman territory of Bosnia and Herzegovina</span>, which it had
-                      occupied since <span class="ans_span3">1878 </span>. This <span class="ans_span9">
-                          angered the Kingdom of Serbia and
-                          its patron, the Pan-Slavic and Orthodox Russian Empire
-                      </span>. Russian political manoeuvring in the
-                      region destabilised peace accords that were already fracturing in the Balkans, which came to
-                      be known as the "powder keg of Europe." In <span class="ans_span4">
-                          1912 and 1913,
-                          the First Balkan War
-                      </span> was fought between the Balkan League and the fracturing Ottoman Empire.
-                      The resulting Treaty of London further shrank the Ottoman Empire, creating an independent Albanian state while enlarging the
-                      territorial holdings of <span class="ans_span6">Bulgaria, Serbia, Montenegro, and Greece </span>. When <span class="ans_span2">
-                          Bulgaria attacked Serbia
-                          and Greece on 16 June 1913
-                      </span>, it <span class="ans_span10">
-                          lost most of Macedonia to Serbia
-                          and Greece
-                      </span>, and Southern Dobruja to Romania in the <span class="ans_span5">
-                          33-day
-                          Second Balkan War
-                      </span> , further destabilising the region. The Great Powers were able to keep these
-                      Balkan conflicts contained, but the next one would spread throughout Europe and beyond.
-                  </div>
-              </div>
+                <div class="left_panel">
+                    <h2>Passage</h2>
+                    <div class="passage-sample">
+                        Austria-Hungary precipitated the <span class="ans_span1">Bosnian crisis of 1908-1909</span>
+                        by <span class="ans_span8">officially annexing the former Ottoman territory of Bosnia and Herzegovina</span>, which it had
+                        occupied since <span class="ans_span3">1878 </span>. This <span class="ans_span9">
+                            angered the Kingdom of Serbia and
+                            its patron, the Pan-Slavic and Orthodox Russian Empire
+                        </span>. Russian political manoeuvring in the
+                        region destabilised peace accords that were already fracturing in the Balkans, which came to
+                        be known as the "powder keg of Europe." In <span class="ans_span4">
+                            1912 and 1913, the First Balkan War
+                        </span> was fought between the Balkan League and the fracturing Ottoman Empire.
+                        The resulting Treaty of London further shrank the Ottoman Empire, creating an independent Albanian state while enlarging the
+                        territorial holdings of <span class="ans_span6">Bulgaria, Serbia, Montenegro, and Greece </span>. When <span class="ans_span2">
+                            Bulgaria attacked Serbia
+                            and Greece on 16 June 1913
+                        </span>, it <span class="ans_span10">
+                            lost most of Macedonia to Serbia and Greece
+                        </span>, and Southern Dobruja to Romania in the <span class="ans_span5">
+                            33-day Second Balkan War
+                        </span> , further destabilising the region. The Great Powers were able to keep these
+                        Balkan conflicts contained, but the next one would spread throughout Europe and beyond.
+                    </div>
+                </div>
 
-              <div class="right_panel_sample">
-                  <div class="tab qapairs">
-                      <h3>Addition or Subtraction</h3>
-                      <div class="query" onmouseover="highlight_q1();" onmouseout="reset_higlight();">
-                          Question : How long did take for Austria-Hungary to annex Bosnia and Herzegovina? <br />
-                          Answer : 31 years (number)<br />
-                      </div>
-                      <div class="query" onmouseover="highlight_q2();" onmouseout="reset_higlight();">
-                          Question : When did the Second Balkan war end? <br />
-                          Answer : 19 July 1913 (date)<br />
-                      </div>
-                      <div class="query" onmouseover="highlight_q3();" onmouseout="reset_higlight();">
-                          Question : How long did the Bosnian Crisis last? <br />
-                          Answer : 1 year (number) <br />
-                      </div>
-                      <hr>
-                      <h3>Set Overlap or Joins</h3>
-                      <div class="query" onmouseover="highlight_q4();" onmouseout="reset_higlight();">
-                          Question : In which year did the two wars, First Balkan war and Bulgarian attack on Serbias and Greece overlap? <br />
-                          Answer : 1913 (date)
-                      </div>
-                      <div class="query" onmouseover="highlight_q5();" onmouseout="reset_higlight();">
-                          Question : Which two wars were ongoing in 1913? <br />
-                          Answer : "First Balkan war", "Second Balkan War" (two separate spans)
-                      </div>
-                      <div class="query" onmouseover="highlight_q9();" onmouseout="reset_higlight();">
-                          Question : Which country started the Second Balkan War? <br />
-                          Answer : Bulgaria (span)
-                      </div>
-                      <hr>
-                      <h3>Comparison</h3>
-                      <div class="query" onmouseover="highlight_q6();" onmouseout="reset_higlight();">
-                          Question :  Which happened first, the Bosnian crisis or the First Balkan War? <br />
-                          Answer : Bosnian crisis (span)
-                      </div>
-                      <hr>
-                      <h3>Count</h3>
-                      <div class="query" onmouseover="highlight_q7();" onmouseout="reset_higlight();">
-                          Question : How many countries were enlarged as a part of Treaty of London? <br />
-                          Answer : 4 (number)<br />
-                      </div>
-                      <hr>
-                      <h3>Find minimum or maximum</h3>
-                      <div class="query" onmouseover="highlight_q8();" onmouseout="reset_higlight();">
-                          Question : Which was the first war to have happened? <br />
-                          Answer : Bosnian Crisis (span)
-                      </div>
-                      <hr>
-                  </div>
-              </div>
-                  <h2 id="Q1">Let's start writing some questions now!</h2>
-                  <h4> <b>The Rules of the task are as follows : </b></h4>
-                  <ol>
-                      <li> Given a passage, you need to create questions that can be answered from the passage. </li>
-                      <li> You have five passages to pick from, and between these five passages, you must create at least 10 questions to
-                        submit the HIT.</li>
-                      <li> Once you create the question, you need to write its answer, either in the form of a date, a number, or spans
-                        copied directly from the passage.</li>
-                      <li> There is an AI running in the background which will also try to answer the question.</li>
-                      <li> You won't be able to submit the question if the AI gives the same reponse. </li>
-                      <li> You can go back and forth between the passages, and you can edit questions by clicking on them.  Once you have
-                        finished all 10 questions, go to the last passage to submit the HIT.</li>
-                      <li> The answers will be cross-checked and the HIT will be rejected if a lot of anwers are incorrect. So, please be
-                        honest and help us in our research.</li>
-                  </ol>
+                <div class="right_panel_sample">
+                    <div class="tab qapairs">
+                        <h3>Addition or Subtraction</h3>
+                        <div class="query" onmouseover="highlight_q1();" onmouseout="reset_higlight();">
+                            Question : How long did take for Austria-Hungary to annex Bosnia and Herzegovina? <br />
+                            Answer : 31 years (number)<br />
+                        </div>
+                        <div class="query" onmouseover="highlight_q2();" onmouseout="reset_higlight();">
+                            Question : When did the Second Balkan war end? <br />
+                            Answer : 19 July 1913 (date)<br />
+                        </div>
+                        <div class="query" onmouseover="highlight_q3();" onmouseout="reset_higlight();">
+                            Question : How long did the Bosnian Crisis last? <br />
+                            Answer : 1 year (number) <br />
+                        </div>
+                        <hr>
+                        <h3>Set Overlap or Joins</h3>
+                        <div class="query" onmouseover="highlight_q4();" onmouseout="reset_higlight();">
+                            Question : In which year did the two wars, First Balkan war and Bulgarian attack on Serbias and Greece overlap? <br />
+                            Answer : 1913 (date)
+                        </div>
+                        <div class="query" onmouseover="highlight_q5();" onmouseout="reset_higlight();">
+                            Question : Which two wars were ongoing in 1913? <br />
+                            Answer : "First Balkan war", "Second Balkan War" (two separate spans)
+                        </div>
+                        <div class="query" onmouseover="highlight_q9();" onmouseout="reset_higlight();">
+                            Question : Which country started the Second Balkan War? <br />
+                            Answer : Bulgaria (span)
+                        </div>
+                        <hr>
+                        <h3>Comparison</h3>
+                        <div class="query" onmouseover="highlight_q6();" onmouseout="reset_higlight();">
+                            Question :  Which happened first, the Bosnian crisis or the First Balkan War? <br />
+                            Answer : Bosnian crisis (span)
+                        </div>
+                        <hr>
+                        <h3>Count</h3>
+                        <div class="query" onmouseover="highlight_q7();" onmouseout="reset_higlight();">
+                            Question : How many countries were enlarged as a part of Treaty of London? <br />
+                            Answer : 4 (number)<br />
+                        </div>
+                        <hr>
+                        <h3>Find minimum or maximum</h3>
+                        <div class="query" onmouseover="highlight_q8();" onmouseout="reset_higlight();">
+                            Question : Which was the first war to have happened? <br />
+                            Answer : Bosnian Crisis (span)
+                        </div>
+                        <hr>
+                    </div>
+                </div>
+                <h2 id="Q1">Let's start writing some questions now!</h2>
+                <h4> <b>The Rules of the task are as follows : </b></h4>
+                <ol>
+                    <li> Given a passage, you need to create questions that can be answered from the passage. </li>
+                    <li>
+                        You have five passages to pick from, and between these five passages, you must create at least 10 questions to
+                        submit the HIT.
+                    </li>
+                    <li>
+                        Once you create the question, you need to write its answer, either in the form of a date, a number, or spans
+                        copied directly from the passage.
+                    </li>
+                    <li> There is an AI running in the background which will also try to answer the question.</li>
+                    <li> You won't be able to submit the question if the AI gives the same reponse. </li>
+                    <li>
+                        You can go back and forth between the passages, and you can edit questions by clicking on them.  Once you have
+                        finished all 10 questions, go to the last passage to submit the HIT.
+                    </li>
+                    <li>
+                        Some passages are easier to generate questions from than others, so if you have a hard time, move to a different passage.
+                    </li>
+                </ol>
             </div>
+            
             <div class="main-container">
+                <br />
+                <div class="notes">
+                    Just as a reminder, here are some patterns that often give good questions.  Combining ideas
+                    from several of these examples is even better. It's often good to use comparatives ("more", "longer", "farther") or superlatives ("most", "shortest") in questions. Here are some example question types for more help.
+                    <br />
+                    <br />
+                    <div class="notes-wrapper">
+                        <div class="note"> How long between two events? </div>
+                        <div class="note"> When did two things overlap? </div>
+                        <div class="note"> Which happened first, X or Y? </div>
+                        <div class="note"> Who had the most of something? </div>
+                        <div class="note"> How many ...? </div>
+                    </div>
+                </div>
                 <br />
                 <div class="passage_num">
                 </div>
@@ -147,7 +171,7 @@
                     <div class="right_panel">
                         <h2>Type a question based on the passage below</h2>
                         <div class="question" align="center">
-
+                            <input type="text" id="input-question" onkeyup="document.getElementById('ai-answer').value = 'AI is thinking ...'; initialize_answer(); run_validations_date_digit();">
                         </div>
                         <div id="wrapper-outer">
                             <div id="wrapper">
@@ -155,11 +179,6 @@
                                     <div class="answer" align="center">
                                         <h4>Your Answer</h4>
                                         <table id="ans_table">
-                                            <tr id="span_row">
-                                                <td>
-                                                    <input type="radio" name="answer" id="span" value='span' onchange="return add_span();">Select span
-                                                </td>
-                                            </tr>
 
                                             <tr id="date_row">
                                                 <td>
@@ -170,6 +189,31 @@
                                                 <td align="center">Year</td>
                                                 <td align="center">Month</td>
                                                 <td align="center">Date</td>
+                                            </tr>
+                                            <tr id="date_row_2" style="display:none">
+                                                <td align="center">
+                                                    <input type="number" id="year" name="year" min="1" max="3000" onkeyup="run_validations_date_digit();">
+                                                </td>
+                                                <td align="center">
+                                                    <select id="month" name="month" onkeyup="run_validations_date_digit();">
+                                                        <option></option>
+                                                        <option>January</option>
+                                                        <option>February</option>
+                                                        <option>March</option>
+                                                        <option>April</option>
+                                                        <option>May</option>
+                                                        <option>June</option>
+                                                        <option>July</option>
+                                                        <option>August</option>
+                                                        <option>September</option>
+                                                        <option>October</option>
+                                                        <option>November</option>
+                                                        <option>December</option>
+                                                    </select>
+                                                </td>
+                                                <td align="center">
+                                                    <input type="number" id="day" name="day" min="1" max="31" onkeyup="run_validations_date_digit();">
+                                                </td>
                                             </tr>
 
                                             <tr id="digit_row">
@@ -182,34 +226,47 @@
                                                 <td align="center">Unit</td>
                                             </tr>
 
-                                            <tr id="yes_no_row">
-                                                <td>
-                                                    <input type="radio" id="yes_no" name="answer" onchange="create_yes_no();">Yes/No
+                                            <tr id="digit_row_2" style="display:none">
+                                                <td align="center">
+                                                    <input type="number" id="value" name="value" onkeyup="run_validations_date_digit();">
+                                                </td>
+                                                <td align="center">
+                                                    <input type="text" id="unit" name="unit" placeholder="years, months etc." onkeyup="run_validations_date_digit();">
                                                 </td>
                                             </tr>
-                                            <tr id="yes_no_row_1" style="display:none">
-                                                <td width="50%"></td>
 
-                                            <tr id="yes_no_row_2" style="display:none">
-                                                <td width="50%"></td>
+                                            <tr id="span_row">
+                                                <td>
+                                                    <input type="radio" name="answer" id="span" value='span' onchange="return add_span(this);">Select span
+                                                </td>
                                             </tr>
+
                                         </table>
                                     </div>
 
                                 </div>
+
                                 <div id="rightcolumn">
                                     <h4>AI predicted the answer below <br />(wait for answer to appear below)</h4>
                                     <div class="ai_answer" align="center">
-                                        <span id="ai-answer"></span>
-                                    </div>
-                                    <div class="wait_loop">
+                                        <input id="ai-answer" type="text" readonly />
 
                                     </div>
+                                   
 
                                 </div>
+
+
                             </div>
 
+
                             <div class="horizontal-scroll-wrapper">
+                            </div>
+                            <br/>
+                            <div id="bottomrow">
+                                <button id="next_question" type="button" class="btn-submit" onclick="create_question();">
+                                    Add Question
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -220,22 +277,28 @@
 
                 </div>
                 <div class="bottom_panel">
+
+                    <button id="ready_submit" type="button" class="btn" onclick="final_submit()" onmouseover="check_question_count();" style="height:50px;min-width:100px;background:darkgray">
+                        Ready to Submit HIT
+                    </button>
+
                     <button id="prev_passage" type="button" class="btn" onclick="populate_passage('previous');">
                         Previous Passage
                     </button>
 
-                    <button id="next_question" type="button" class="btn-submit" onclick="create_question();">
-                        Submit Question
-                    </button>
                     <button id="next_passage" type="button" class="btn" onclick="populate_passage('next');">
                         Next Passage
                     </button>
+
                 </div>
             </div>
         </div>
-           
-          <p align="right"><input type='submit' id='submitButton' value='Submit HIT' style="display:none;height:50px;width:100px;"/></p>
-        </form>
+
+        <div id="submission" style="display:none">
+            <h2> Thank you for helping our research!</h2>
+        </div>
+       <div><input type='submit' class="btn" id='submitButton' value='Submit HIT'  style="display:none;margin-left: 45%"/></div>
+    </form>
         <script language='Javascript'>turkSetAssignmentID();</script>
     </body>
 
