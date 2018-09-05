@@ -182,9 +182,7 @@ h4 {
     text-align: center
 }
 
-.note:hover {
-    font-weight: bold;
-}
+
 
 .qapairs {
     top: 10px;
@@ -442,8 +440,6 @@ select {
     font-size: 16px
 }
 
-
-
 .query:hover {
     border: solid 2px darkred;
 }
@@ -456,4 +452,10 @@ a:hover {
     text-decoration: underline;
     font-weight: bold;
     color: blue;
+}
+
+#ready_submit {
+    height: 50px;
+    min-width: 100px;
+    background: darkgray;
 }

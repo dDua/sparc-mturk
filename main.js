@@ -7,6 +7,7 @@ var current_question_id = ""
 var edit_mode = false
 var annotations = {}
 var min_questions = 10
+var global_timeout = null
 
 document.onkeypress = function (event) {
     // on enter press override to create question
@@ -56,11 +57,6 @@ function bow_overlap(a, b, threshold) {
     return (result != threshold)
 }
 
-//Reset Error Panel
-function reset_error() {
-    var parent = document.getElementsByClassName("error_panel")[0]
-    parent.innerText = ""
-}
 
 //Get elements matching id regex
 function get_elements_by_id_starts_with(container, selector_tag, prefix) {
@@ -89,15 +85,19 @@ function get_elements_by_class_starts_with(container, selector_tag, prefix) {
 
 // Attach AI-answer fetch to the quest text keyup event
 function initialize_answer() {
-    how_many_check();
+    document.getElementById('ai-answer').value = 'AI is thinking ...';
+   
+    if (global_timeout != null) {
+        clearTimeout(global_timeout);
+    }
 
-    var timeout = null;
-        
-    clearTimeout(timeout);
-
-    timeout = setTimeout(function () {
+    global_timeout = setTimeout(function () {
+        global_timeout = null
+        how_many_check();
         invoke_bidaf_with_retries(3);
-    }, 1000);
+    }, 800);
+
+    run_validations_date_digit();
 }
 
 function deselect_date() {
@@ -115,7 +115,7 @@ function deselect_date() {
 function deselect_digit() {
     var caption_row = document.getElementById("digit_row_1")
     var data_row = document.getElementById("digit_row_2")
-    document.getElementById("value").value= ""
+    document.getElementById("value").value = ""
     document.getElementById("unit").value = ""
     caption_row.style.display = 'none'
     data_row.style.display = 'none'
@@ -133,7 +133,8 @@ function deselect_span() {
             // remove spans
             //span_elements[i].parentNode.parentNode.remove()
             var mark_node = span_elements[i].parentNode.nextSibling
-            if (mark_node && (mark_node.innerText.charCodeAt().toString().includes("10004") || mark_node.innerText.charCodeAt().toString().includes("10008"))) {
+            if (mark_node && (mark_node.innerText.charCodeAt().toString().includes("10004")
+                    || mark_node.innerText.charCodeAt().toString().includes("10008"))) {
                 mark_node.remove()
             }
             span_elements[i].value = ""
@@ -144,23 +145,23 @@ function deselect_span() {
 }
 
 //disable submission button
-function disable_submission() {
-    document.getElementById("next_question").style.background = "darkgray";
-    document.getElementById("next_question").disabled = true
+function disable_button(button_id) {
+    document.getElementById(button_id).style.background = "darkgray";
+    document.getElementById(button_id).disabled = true
 }
 
 // Edit an already added QA pair
 function modify_previous_question() {
     edit_mode = true
-    document.getElementById("next_question").innerText = "RE-SUBMIT ANSWER"
+    document.getElementById("next_question").innerText = "RE-SUBMIT QUESTION"
 
-   // reset_passage_buttons()
+    // reset_passage_buttons()
 
     document.getElementById("next_question").disabled = false
     document.getElementById("next_question").style.background = "#2085bc";
 
     current_question_id = this.id
-    var annotation  = annotations[current_question_id]
+    var annotation = annotations[current_question_id]
 
     if (annotation.answer.checked == "date") {
         document.getElementById("date").checked = true
@@ -182,7 +183,7 @@ function modify_previous_question() {
             span_elements[i].parentNode.parentNode.style.display = ""
             span_elements[i].value = annotation.answer.spans[i]
         }
-        var last_row = span_elements[i-1].parentNode.parentNode
+        var last_row = span_elements[i - 1].parentNode.parentNode
         last_row.cells[last_row.cells.length - 1].innerHTML = '<a href="add_span" onclick="return add_span(this);">&#10010;</a>';
     }
 
@@ -206,8 +207,8 @@ function create_text_for_tab() {
             "unit": ""
         },
         "spans": [],
-        "checked" : ""
-        
+        "checked": ""
+
     }
     var empty_qa = false
     var correct_flag = true
@@ -218,11 +219,11 @@ function create_text_for_tab() {
         empty_qa = empty_qa || true
     }
 
-    var qa_text = "Q: " + question_el.value + "\nA: "
+    var qa_text = "Q: " + question_el.value.trim() + "\nA: "
     if (document.getElementById("date").checked) {
-        var year = document.getElementById("year").value
-        var month = document.getElementById("month").value
-        var day = document.getElementById("day").value
+        var year = document.getElementById("year").value.trim()
+        var month = document.getElementById("month").value.trim()
+        var day = document.getElementById("day").value.trim()
         answer.date.year = year
         answer.date.month = month
         answer.date.day = day
@@ -240,8 +241,8 @@ function create_text_for_tab() {
         var duplicate_check = duplicate_qa_check(qa_text)
 
     } else if (document.getElementById("digit").checked) {
-        var dig = document.getElementById("value").value
-        var unit = document.getElementById("unit").value
+        var dig = document.getElementById("value").value.trim()
+        var unit = document.getElementById("unit").value.trim()
         var input_number = dig + " " + unit
         var input_number = input_number.trim()
         if (dig == "") {
@@ -253,11 +254,11 @@ function create_text_for_tab() {
         answer.digit.unit = unit
 
         answer.checked = "digit"
-        
+
         ai_overlap = bow_overlap(document.getElementById('ai-answer').value, input_number, 1.0)
 
         var duplicate_check = duplicate_qa_check(qa_text)
-        
+
 
     } else if (document.getElementById("span").checked) {
         var correct_flag = span_match_check()
@@ -280,7 +281,7 @@ function create_text_for_tab() {
 
         qa_text = qa_text + input_spans
         var duplicate_check = duplicate_qa_check(qa_text)
-        
+
     } else {
         empty_qa = empty_qa || true
     }
@@ -291,18 +292,13 @@ function create_text_for_tab() {
         "empty_qa": empty_qa,
         "correct_text": correct_flag,
         "duplicate_check": duplicate_check,
-        "annotation" : answer
+        "annotation": answer
     }
 }
 
 //Submit the question 
 function create_question() {
     var correct_flag = new Boolean(true)
-
-    // get query if for current or previously added question
-    if (!edit_mode) {
-        current_question_id = (record_count - 1) + "-" + question_num
-    }
 
     var annotation = { question: "", answer: "" }
 
@@ -336,38 +332,16 @@ function create_question() {
             question_num = question_num + 1
             total_question_cnt = total_question_cnt + 1
             document.getElementsByClassName("passage_num")[0].innerText = "Passage: " + (record_count) + "/" + passages.length + " Questions: " + (total_question_cnt)
-            
+            current_question_id = (record_count - 1) + "-" + question_num
             // else just modify the text
         } else {
             var curr_tab = document.getElementById(current_question_id);
             curr_tab.innerText = qa_text
             document.getElementById("input-question").value = ""
-           
         }
-        
-
-    } else if (!correct_flag) {
-        var parent = document.getElementsByClassName("error_panel")[0]
-        if (document.getElementById("span").checked) {
-            parent.innerText = "Please check the spans. The text should match the spans in passage exactly!"
-        } else if (document.getElementById("date").checked) {
-            parent.innerText = "Please check the date. The text should match the date in passage exactly!"
-        }
-    } else if (empty_qa) {
-        var parent = document.getElementsByClassName("error_panel")[0]
-        parent.innerText = "Empty question or answer or span"
-    } else if (!ai_overlap) {
-        var parent = document.getElementsByClassName("error_panel")[0]
-        parent.innerText = "AI answer matches true answer. Please try a different question."
-    } else if (duplicate_check) {
-        var parent = document.getElementsByClassName("error_panel")[0]
-        parent.innerText = "Same question-answer pair has alreday been added.  Please try a different question."
-    } else {
-        var parent = document.getElementsByClassName("error_panel")[0]
-        parent.innerText = "Something wrong with the answer please try a differenet question."
-    }
-    reset()  
-    check_question_count()
+        reset()
+        check_question_count()
+    } 
 }
 
 function reset() {
@@ -377,10 +351,9 @@ function reset() {
     deselect_digit()
     deselect_span()
 
-    reset_error()
-    disable_submission()
+    disable_button("next_question")
     if (edit_mode) {
-        document.getElementById("next_question").innerText = "ADD ANSWER"
+        document.getElementById("next_question").innerText = "ADD QUESTION"
 
         reset_passage_buttons()
         edit_mode = false
@@ -389,8 +362,6 @@ function reset() {
 
 // Run span checks on hover 
 function run_validations_span() {
-    reset_error()
-
     var result = create_text_for_tab()
     var qa_text = result.qa_text
     var ai_overlap = result.ai_overlap
@@ -401,73 +372,55 @@ function run_validations_span() {
     if (correct_flag && ai_overlap && !empty_qa && !duplicate_check) {
         document.getElementById("next_question").style.background = "#2085bc";
         document.getElementById("next_question").disabled = false
+        document.getElementById("next_question").title = ""
     }
     else if (!correct_flag) {
-        document.getElementById("next_question").style.background = "darkgray";
-        document.getElementById("next_question").disabled = true
-        var parent = document.getElementsByClassName("error_panel")[0]
+        disable_button("next_question")
         if (document.getElementById("span").checked) {
-            parent.innerText = "Please check the spans. The text should match the spans in passage exactly!"
-        } else if (document.getElementById("date").checked) {
-            parent.innerText = "Please check the date. The text should match the date in passage exactly!"
-        }
+           // parent.innerText = "Please check the spans. The text should match the spans in passage exactly!"
+            document.getElementById("next_question").title = "Please check the spans. The text should match the spans in passage exactly!"
+        } 
     } else if (empty_qa) {
-        document.getElementById("next_question").style.background = "darkgray";
-        document.getElementById("next_question").disabled = true
-        var parent = document.getElementsByClassName("error_panel")[0]
-        parent.innerText = "Empty question or answer or span"
+        disable_button("next_question")
+        document.getElementById("next_question").title = "Empty question or answer or span"
     } else if (!ai_overlap) {
-        document.getElementById("next_question").style.background = "darkgray";
-        var parent = document.getElementsByClassName("error_panel")[0]
-        parent.innerText = "AI answer matches true answer. Please try a different question."
+        disable_button("next_question")
+        document.getElementById("next_question").title = "AI answer matches true answer. Please try a different question."
     } else if (duplicate_check) {
-        document.getElementById("next_question").disabled = true
-        document.getElementById("next_question").style.background = "darkgray";
-        var parent = document.getElementsByClassName("error_panel")[0]
-        parent.innerText = "Same question-answer pair has alreday been added.  Please try a different question."
+        disable_button("next_question")
+        document.getElementById("next_question").title = "Same question-answer pair has alreday been added.  Please try a different question."
     } else {
-        document.getElementById("next_question").disabled = true
-        document.getElementById("next_question").style.background = "darkgray";
-        var parent = document.getElementsByClassName("error_panel")[0]
-        parent.innerText = "Something wrong with the answer please try a differenet question."
+        disable_button("next_question")
+        document.getElementById("next_question").title = "Something wrong with the answer please try a differenet question."
     }
 }
 
 // Run date and digit checks on hover 
 function run_validations_date_digit() {
-    reset_error()
-
+  
     var result = create_text_for_tab()
     var qa_text = result.qa_text
     var ai_overlap = result.ai_overlap
     var empty_qa = result.empty_qa
     var correct_flag = result.correct_text
-    var duplicate_check = result.duplicate_check    
-   
+    var duplicate_check = result.duplicate_check
+
     if (ai_overlap && !empty_qa && !duplicate_check) {
         document.getElementById("next_question").disabled = false
         document.getElementById("next_question").style.background = "#2085bc";
-       
+
     } else if (empty_qa) {
-        document.getElementById("next_question").style.background = "darkgray";
-        document.getElementById("next_question").disabled = true
-        var parent = document.getElementsByClassName("error_panel")[0]
-        parent.innerText = "Empty question or answer or span"
+        
+        document.getElementById("next_question").title = "Empty question or answer or span"
     } else if (!ai_overlap) {
-        document.getElementById("next_question").style.background = "darkgray";
-        document.getElementById("next_question").disabled = true
-        var parent = document.getElementsByClassName("error_panel")[0]
-        parent.innerText = "AI answer matches true answer. Please try a different question."
+        disable_button("next_question")
+        document.getElementById("next_question").title = "AI answer matches true answer. Please try a different question."
     } else if (duplicate_check) {
-        document.getElementById("next_question").style.background = "darkgray";
-        var parent = document.getElementsByClassName("error_panel")[0]
-        document.getElementById("next_question").disabled = true
-        parent.innerText = "Same question-answer pair has alreday been added.  Please try a different question."
+        disable_button("next_question")
+        document.getElementById("next_question").title = "Same question-answer pair has alreday been added.  Please try a different question."
     } else {
-        document.getElementById("next_question").style.background = "darkgray";
-        document.getElementById("next_question").disabled = true
-        var parent = document.getElementsByClassName("error_panel")[0]
-        parent.innerText = "Something wrong with the answer please try a different question."
+        disable_button("next_question")
+        document.getElementById("next_question").title = "Something wrong with the answer please try a different question."
     }
 }
 
@@ -505,23 +458,23 @@ function span_match_check() {
         var count = 0
         for (var i = span_ind + 1; i < ans_table.rows.length; i++) {
             var span_id = "span-" + count
-             if (document.getElementById(span_id)) {
+            if (document.getElementById(span_id)) {
                 var span_value = document.getElementById(span_id).value
                 var cur_span_row = document.getElementById(span_id).parentNode.parentNode
                 var passage_str = document.getElementsByClassName("passage-" + record_count)[0].innerText
                 var pattern = new RegExp(span_value);
-                 if (pattern.test(passage_str) && span_value!= "") {
+                if (pattern.test(passage_str) && span_value != "") {
                     if ((cur_span_row.cells.length == 2) ||
-                        (span_count == i) && (cur_span_row.cells.length == 2)) {
+                        (span_count == count) && (cur_span_row.cells.length == 2)) {
                         var marker = cur_span_row.insertCell(1)
                         marker.innerHTML = '<p style="color: green;">&#10004;</p>'
                     } else {
                         var marker = cur_span_row.cells[1]
                         marker.innerHTML = '<p style="color: green;">&#10004;</p>'
                     }
-                 } else if (span_value != "") {
-                    if ((cur_span_row.cells.length == 1) ||
-                        (span_count == i) && (cur_span_row.cells.length == 2)) {
+                } else if (span_value != "") {
+                    if ((cur_span_row.cells.length == 2) ||
+                        (span_count == count) && (cur_span_row.cells.length == 2)) {
                         var marker = cur_span_row.insertCell(1)
                         marker.innerHTML = '<p style="color: red;">&#10008;</p>'
                     } else {
@@ -798,7 +751,7 @@ function create_input_date() {
     if (document.getElementById("date").checked) {
         caption_row.style.display = ''
         data_row.style.display = ''
-    } 
+    }
     deselect_digit()
     deselect_span()
 }
@@ -808,9 +761,9 @@ function create_input_digit() {
     if (document.getElementById("digit").checked) {
         var caption_row = document.getElementById("digit_row_1")
         var data_row = document.getElementById("digit_row_2")
-        caption_row.style.display = ''        
-        data_row.style.display = ''        
-    } 
+        caption_row.style.display = ''
+        data_row.style.display = ''
+    }
     deselect_date()
     deselect_span()
 }
@@ -827,17 +780,17 @@ function create_tabs(prefix) {
 }
 
 // switch between next and previous passages
-function populate_passage(config) {    
+function populate_passage(config) {
     if (record_count <= passages.length) {
         var parent = document.getElementsByClassName("passage")[0];
         var passage_el = document.getElementsByClassName("passage-" + record_count)[0];
         passage_el.remove();
         reset_tabs()
 
-        if (config == "next") {            
+        if (config == "next") {
             record_count = record_count + 1;
-            
-        } else {            
+
+        } else {
             record_count = record_count - 1;
         }
         var rect_el = get_elements_by_class_starts_with("horizontal-scroll-wrapper", "div", (record_count - 1) + "-")
@@ -853,7 +806,7 @@ function populate_passage(config) {
 
         var i = 0
         while (true) {
-            var tab_qa = document.getElementById((record_count-1) + "-" + i)
+            var tab_qa = document.getElementById((record_count - 1) + "-" + i)
             if (!tab_qa) break;
             else {
                 tab_qa.style.display = ""
@@ -862,22 +815,16 @@ function populate_passage(config) {
         }
     }
     reset_passage_buttons()
-
-    
     current_question_id = (record_count - 1) + "-" + question_num
-    initialize_answer()
+    document.getElementById("input-question").onkeyup = initialize_answer
     reset()
-    
-
 }
 
 function reset_passage_buttons() {
     if (record_count <= 1) {
-        document.getElementById("prev_passage").style.background = "darkgray"
-        document.getElementById("prev_passage").disabled = true
+        disable_button("prev_passage")
     } else if (record_count == passages.length) {
-        document.getElementById("next_passage").style.background = "darkgray"
-        document.getElementById("next_passage").disabled = true
+        disable_button("next_passage")
     } else {
         document.getElementById("next_passage").disabled = false
         document.getElementById("prev_passage").disabled = false
@@ -888,7 +835,7 @@ function reset_passage_buttons() {
 
 // Reset element when previous passages control is selected
 function reset_tabs() {
-    var rectange_el = get_elements_by_class_starts_with("horizontal-scroll-wrapper", "div", (record_count-1) + "-")
+    var rectange_el = get_elements_by_class_starts_with("horizontal-scroll-wrapper", "div", (record_count - 1) + "-")
     for (var i = 0; i < rectange_el.length; i++) {
         rectange_el[i].style.display = "none"
     }
@@ -931,7 +878,7 @@ function invoke_bidaf_with_retries(n) {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(r)
-        }).then(resolve_response) 
+        }).then(resolve_response)
             .catch(function (error) {
                 if (n === 1) return reject(error_response);
                 invoke_bidaf_with_retries(n - 1)
@@ -964,7 +911,7 @@ function delete_span(el) {
 function add_span(el) {
     deselect_digit()
     deselect_date()
-      
+
     var ans_table = document.getElementById("ans_table");
     var span_index = el.parentNode.parentNode.rowIndex
     var span_row_start_index = document.getElementById("span_row").rowIndex
@@ -976,16 +923,16 @@ function add_span(el) {
         new_cell.innerHTML = '<input type="text" placeholder="copy text from passage here" id="span-' + span_count + '" name="span-' + span_count + '">';
         var new_ref = new_row.insertCell(1)
         new_ref.innerHTML = '<a href="add_span" onclick="return add_span(this);">&#10010;</a>'
-    
+
         if (span_count >= 1) {
             var prev_row = ans_table.rows[new_row.rowIndex - 1]
-            var row_sub_link = prev_row.cells[prev_row.cells.length-1]
+            var row_sub_link = prev_row.cells[prev_row.cells.length - 1]
             row_sub_link.innerHTML = ' <a href="delete_span" onclick="return delete_span(this);">&#9473;</a>'
         }
-   
+
         document.getElementById("span-" + span_count).onkeyup = run_validations_span
     }
-    
+
     return false;
 }
 
@@ -1005,24 +952,24 @@ function collapse() {
 function check_question_count() {
     if (total_question_cnt < min_questions) {
         document.getElementById("ready_submit").title = "Must write " + (min_questions - total_question_cnt) + " more questions to submit"
-       // document.getElementById("next_question").style.background = "darkgray"
+
     } else {
         document.getElementById("ready_submit").title = ""
-        document.getElementById("ready_submit").disable = false
+        document.getElementById("ready_submit").disabled = false
         document.getElementById("ready_submit").style.background = "#2085bc";
         document.getElementById("ready_submit").value = "Ready to Submit"
     }
 }
 
 function final_submit() {
-    var root = document.getElementById("root")
+    var root = document.getElementById("generated_answers")
     for (var key in annotations) {
         var answer = annotations[key].answer
         var question_el = document.createElement("input")
         question_el.value = annotations[key].question
         question_el.id = "input-question-" + key
         question_el.name = "input-question-" + key
-        question_el.type= "text"
+        question_el.type = "text"
         question_el.style.display = 'none'
         root.appendChild(question_el)
 
@@ -1035,7 +982,7 @@ function final_submit() {
                 span_el.value = annotations[key].answer.spans[i]
                 span_el.style.display = 'none'
                 root.appendChild(span_el)
-            }            
+            }
         } else if (annotations[key].answer.checked == "date") {
             var year_el = document.createElement("input")
             year_el.type = "number"
@@ -1080,7 +1027,8 @@ function final_submit() {
         }
 
     }
-    document.getElementById("root").style.display = "none"
+    document.getElementById("root").remove()
     document.getElementById("submission").style.display = ""
-    submitButton.style.display = ""
+    document.getElementById("submitButton").style.display = ""
+    document.getElementById("comment").style.display = ""
 }

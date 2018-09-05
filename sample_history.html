@@ -138,7 +138,7 @@
                     </li>
                 </ol>
             </div>
-            
+
             <div class="main-container">
                 <br />
                 <div class="notes">
@@ -171,7 +171,7 @@
                     <div class="right_panel">
                         <h2>Type a question based on the passage below</h2>
                         <div class="question" align="center">
-                            <input type="text" id="input-question" onkeyup="document.getElementById('ai-answer').value = 'AI is thinking ...'; initialize_answer(); run_validations_date_digit();">
+                            <input type="text" id="input-question" onkeyup="initialize_answer();">
                         </div>
                         <div id="wrapper-outer">
                             <div id="wrapper">
@@ -195,7 +195,7 @@
                                                     <input type="number" id="year" name="year" min="1" max="3000" onkeyup="run_validations_date_digit();">
                                                 </td>
                                                 <td align="center">
-                                                    <select id="month" name="month" onkeyup="run_validations_date_digit();">
+                                                    <select id="month" name="month" onchange="run_validations_date_digit();">
                                                         <option></option>
                                                         <option>January</option>
                                                         <option>February</option>
@@ -252,7 +252,7 @@
                                         <input id="ai-answer" type="text" readonly />
 
                                     </div>
-                                   
+
 
                                 </div>
 
@@ -262,7 +262,7 @@
 
                             <div class="horizontal-scroll-wrapper">
                             </div>
-                            <br/>
+                            <br />
                             <div id="bottomrow">
                                 <button id="next_question" type="button" class="btn-submit" onclick="create_question();">
                                     Add Question
@@ -273,12 +273,9 @@
 
                 </div>
 
-                <div class="error_panel">
-
-                </div>
                 <div class="bottom_panel">
 
-                    <button id="ready_submit" type="button" class="btn" onclick="final_submit()" onmouseover="check_question_count();" style="height:50px;min-width:100px;background:darkgray">
+                    <button id="ready_submit" type="button" class="btn" disabled onclick="final_submit()" onmouseover="check_question_count();">
                         Ready to Submit HIT
                     </button>
 
@@ -294,10 +291,23 @@
             </div>
         </div>
 
-        <div id="submission" style="display:none">
-            <h2> Thank you for helping our research!</h2>
+        <div id="generated_answers">
         </div>
-       <div><input type='submit' class="btn" id='submitButton' value='Submit HIT'  style="display:none;margin-left: 45%"/></div>
+        
+        <div id="submission" style="display:none">
+            <h2>Thank you for helping our research!</h2>
+            <h3>We would really appreciate any feedback you can share as we are doing a pilot for this task currently.</h3>
+        </div>
+        <br />
+        <div id="comment" style="display:none;margin:40px auto;">
+            <input type="text" id="feedback" style="display:block; margin: 0 auto;"/>
+        </div>
+        <br />
+
+        <div>
+            <input type='submit' class="btn" id='submitButton' value='Submit HIT' style="display:none;margin-left:45%" />
+        </div>
+
     </form>
         <script language='Javascript'>turkSetAssignmentID();</script>
     </body>
