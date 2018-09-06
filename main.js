@@ -6,7 +6,7 @@ var annotations = []
 var current_question_id = ""
 var edit_mode = false
 var annotations = {}
-var min_questions = 10
+var min_questions = 1
 var global_timeout = null
 
 document.onkeypress = function (event) {
@@ -94,7 +94,7 @@ function initialize_answer() {
     global_timeout = setTimeout(function () {
         global_timeout = null
         how_many_check();
-        invoke_bidaf_with_retries(3);
+        //invoke_bidaf_with_retries(3);
     }, 800);
 
     run_validations_date_digit();
@@ -1027,8 +1027,10 @@ function final_submit() {
         }
 
     }
-    document.getElementById("root").remove()
+    //document.getElementById("root").remove()
     document.getElementById("submission").style.display = ""
     document.getElementById("submitButton").style.display = ""
     document.getElementById("comment").style.display = ""
+   // document.getElementById("collapse_link").dispatchEvent(new MouseEvent('click'))
+    document.getElementsByClassName("main-container")[0].style.display = "none"
 }

@@ -13,7 +13,7 @@
 
         <div id="root">
             <h2>Complex question answering with high-Level reasoning and inference</h2>
-            <a href="collapse" onclick="return collapse();" id="collapse_link">(Click to collapse)</a>
+            <a href="collapse" onclick="return collapse();" id="collapse_link"><u>(Click to collapse)</u></a>
             <div class="annotated">
                 <div>
                     <p>
@@ -26,6 +26,11 @@
                     <p>
                         Below, we provide some example questions that involve different kinds of reasoning.  Try to use a variety of
                         reasoning types in the questions you come up with, and also have a variety of answer types (spans, numbers, dates).
+                        A <b><i>span</i></b> is a continuous phrase taken directly from the passage. You can directly copy-paste the text from the
+                        passage into span box. If you find multiple spans, please use the '+/-' button to add/remove. A <b><i>number</i></b> type
+                        answer can include a digit  specifying an actual value and an associated unit like year, yards and cms etc. If a question is
+                        a <i>"how many"</i> type question (for eg., How many years did the war last?), the units will be disabled. A <b><i>date</i></b> type
+                        answer can be used to specify a date with the help of a date selector.
                     </p>
                 </div>
 
@@ -133,8 +138,7 @@
                         finished all 10 questions, go to the last passage to submit the HIT.
                     </li>
                     <li>
-                        The answers will be cross-checked and the HIT will be rejected if a lot of anwers are incorrect. So, please be
-                        honest and help us in our research.
+                        Some passages are easier to generate questions from than others, so if you have a hard time, move to a different passage.
                     </li>
                 </ol>
             </div>
@@ -147,11 +151,13 @@
                     <br />
                     <br />
                     <div class="notes-wrapper">
-                        <div class="note"> How long between two events? </div>
-                        <div class="note"> When did two things overlap? </div>
-                        <div class="note"> Which happened first, X or Y? </div>
-                        <div class="note"> Who had the most of something? </div>
-                        <div class="note"> How many ...? </div>
+                        <div class="note"> Who scored more points, X or Y? </div>
+                        <div class="note"> Who threw the longest pass? </div>
+                        <div class="note"> How long was the longest field goal? </div>
+                        <div class="note"> How many passes did X receive? </div>
+                        <div class="note"> Which team scored the most in the first quarter? </div>
+                        <div class="note"> In which quarter did the teams both score the same number of field goals? </div>
+                        <div class="note"> In which quarter did X throw the most passes? </div>
                     </div>
                 </div>
                 <br />
@@ -171,6 +177,7 @@
                     <div class="right_panel">
                         <h2>Type a question based on the passage below</h2>
                         <div class="question">
+                            <input type="text" id="input-question" onkeyup="document.getElementById('ai-answer').value = 'AI is thinking ...'; initialize_answer(); run_validations_date_digit();">
                         </div>
 
                         <div id="wrapper-outer">
@@ -180,7 +187,7 @@
                                         <h4>Your Answer</h4>
                                         <table id="ans_table">
 
-                                            <tr id="date_row">
+                                            <tr id="date_row" style="display:none">
                                                 <td>
                                                     <input type="radio" name="answer" id="date" value='date' onchange="create_input_date();">Date
                                                 </td>
@@ -195,7 +202,7 @@
                                                     <input type="number" id="year" name="year" min="1" max="3000" onkeyup="run_validations_date_digit();">
                                                 </td>
                                                 <td align="center">
-                                                    <select id="month" name="month" onkeyup="run_validations_date_digit();">
+                                                    <select id="month" name="month" onchange="run_validations_date_digit();">
                                                         <option></option>
                                                         <option>January</option>
                                                         <option>February</option>
@@ -231,7 +238,7 @@
                                                     <input type="number" id="value" name="value" onkeyup="run_validations_date_digit();">
                                                 </td>
                                                 <td align="center">
-                                                    <input type="text" id="unit" name="unit" placeholder="yards, points etc." onkeyup="run_validations_date_digit();">
+                                                    <input type="text" id="unit" name="unit" placeholder="yards, field-goals etc." onkeyup="run_validations_date_digit();">
                                                 </td>
                                             </tr>
 
@@ -250,21 +257,24 @@
                                     <h4>AI predicted the answer below <br />(wait for answer to appear below)</h4>
                                     <div class="ai_answer" align="center">
                                         <input id="ai-answer" type="text" readonly />
+
                                     </div>
 
+
                                 </div>
+
+
                             </div>
+
 
                             <div class="horizontal-scroll-wrapper">
                             </div>
-
                             <br />
                             <div id="bottomrow">
                                 <button id="next_question" type="button" class="btn-submit" onclick="create_question();">
                                     Add Question
                                 </button>
                             </div>
-
                         </div>
 
                     </div>
@@ -276,7 +286,7 @@
 
                 <div class="bottom_panel">
 
-                    <button id="ready_submit" type="button" class="btn" onclick="final_submit()" onmouseover="check_question_count();" style="height:50px;min-width:100px;background:darkgray">
+                    <button id="ready_submit" type="button" class="btn" disabled onclick="final_submit()" onmouseover="check_question_count();" style="height:50px;min-width:100px;background:darkgray">
                         Ready to Submit HIT
                     </button>
 
@@ -293,10 +303,23 @@
             </div>
         </div>
 
-        <div id="submission" style="display:none">
-            <h2> Thank you for helping our research!</h2>
+        <div id="generated_answers">
         </div>
-        <p align="right"><input type='submit' id='submitButton' value='Submit HIT' style="display:none;height:50px;width:100px;" /></p>
+
+        <div id="submission" style="display:none">
+            <h2>Thank you for helping our research!</h2>
+            <h3>We would really appreciate any feedback you can share as we are doing a pilot for this task currently.</h3>
+        </div>
+        <br />
+        <div id="comment" style="display:none;margin:40px auto;">
+            <input type="text" id="feedback" name="feedback" style="display:block; margin: 0 auto;" />
+        </div>
+        <br />
+
+        <div>
+          <input type='submit' class="btn" id='submitButton' value='Submit HIT' style="display:none;margin-left:45%" />
+        </div>
+
     </form>
     <script language='Javascript'>turkSetAssignmentID();</script>
 </body>
