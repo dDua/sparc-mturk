@@ -27,9 +27,12 @@
                         reasoning types in the questions you come up with, and also have a variety of answer types (spans, numbers, dates).
                         A <b><i>span</i></b> is a continuous phrase taken directly from the passage. You can directly copy-paste the text from the
                         passage into span box. If you find multiple spans, please use the '+/-' button to add/remove. A <b><i>number</i></b> type
-                        answer can include a digit  specifying an actual value and an associated unit like year, yards and cms etc. If a question is
-                        a <i>"how many"</i> type question (for eg., How many years did the war last?), the units will be disabled. A <b><i>date</i></b> type
-                        answer can be used to specify a date with the help of a date selector.
+                        answer can include a digit specifying an actual value. Number-type answer can only accept a <i>"How many ..."</i> type question.
+                        So remember to phrase the coresponding question for any number-type answer correctly. For instance, <i>"How long did an event last?"</i> can
+                        be phrased as <i>"How many years did an event last?"</i>.
+                        <!--and an associated unit like year, yards and cms etc. If a question is a <i>"how many"</i> type question (for eg., How many
+                         years did the war last?), the units will be disabled.-->
+                        A <b><i>date</i></b> type answer can be used to specify a date with the help of a date selector.
                     </p>
                 </div>
                 <div align="left">
@@ -69,16 +72,18 @@
                     <div class="tab qapairs">
                         <h3>Addition or Subtraction</h3>
                         <div class="query" onmouseover="highlight_q1();" onmouseout="reset_higlight();">
-                            Question : How long did take for Austria-Hungary to annex Bosnia and Herzegovina? <br />
-                            Answer : 31 years (number)<br />
+                            <!--Question : How long did take for Austria-Hungary to annex Bosnia and Herzegovina? <br />
+                            Answer : 31 years (number)<br />-->
+                            Question : How many years did it take for Austria-Hungary to annex Bosnia and Herzegovina? <br />
+                            Answer : 31 (number)<br />
                         </div>
                         <div class="query" onmouseover="highlight_q2();" onmouseout="reset_higlight();">
                             Question : When did the Second Balkan war end? <br />
                             Answer : 19 July 1913 (date)<br />
                         </div>
                         <div class="query" onmouseover="highlight_q3();" onmouseout="reset_higlight();">
-                            Question : How long did the Bosnian Crisis last? <br />
-                            Answer : 1 year (number) <br />
+                            Question : How many years did the Bosnian Crisis last? <br />
+                            Answer : 1 (number) <br />
                         </div>
                         <hr>
                         <h3>Set Overlap or Joins</h3>
@@ -136,6 +141,9 @@
                     <li>
                         Some passages are easier to generate questions from than others, so if you have a hard time, move to a different passage.
                     </li>
+                    <li>
+                        If the "ADD QUESTION" or "READY TO SUBMIT HIT" buttons are not active, hover your mouse on them to know the reason.
+                    </li>
                 </ol>
             </div>
 
@@ -143,19 +151,25 @@
                 <br />
                 <div class="notes">
                     Just as a reminder, here are some patterns that often give good questions.  Combining ideas
-                    from several of these examples is even better. It's often good to use comparatives ("more", "longer", "farther") or superlatives ("most", "shortest") in questions. Here are some example question types for more help.
+                    from several of these examples is even better. It's often good to use comparatives ("more", "longer", "farther") 
+                    or superlatives ("most", "shortest") in questions. Here are some example question types for more help.
                     <br />
                     <br />
                     <div class="notes-wrapper">
-                        <div class="note"> How long did some event take? </div>
+                        <!-- <div class="note"> How long did some event take? </div> -->
+                        <div class="note"> How many days or months or years did some event take? </div>
                         <div class="note"> When did the two events overlap? </div>
-                        <div class="note"> How long did the two events overlap? </div>
+                        <!-- <div class="note"> How long did the two events overlap? </div>-->
+                        <div class="note"> How many years did the two events overlap? </div>
                         <div class="note"> Which event happened first, X or Y? </div>
                         <div class="note"> Who had the most or least of something? </div>
-                        <div class="note"> How many ...? </div>
+                        <!-- <div class="note"> How many ...? </div>-->
                     </div>
                 </div>
                 <br />
+                <h3><b>We are piloting this HIT and are looking for feedback.  There may be problems or difficulties in what we ask you do.  Please do your best, and leave us feedback at the bottom.</b></h3>
+                <br />
+
                 <div class="passage_num">
                 </div>
                 <br />
@@ -171,7 +185,7 @@
 
                     <div class="right_panel">
                         <h2>Type a question based on the passage below</h2>
-                        <div class="question" align="center">
+                        <div class="question">
                             <input type="text" id="input-question" onkeyup="initialize_answer();">
                         </div>
                         <div id="wrapper-outer">
@@ -180,7 +194,6 @@
                                     <div class="answer" align="center">
                                         <h4>Your Answer</h4>
                                         <table id="ans_table">
-
                                             <tr id="date_row">
                                                 <td>
                                                     <input type="radio" name="answer" id="date" value='date' onchange="create_input_date();">Date
@@ -224,14 +237,14 @@
                                             </tr>
                                             <tr id="digit_row_1" style="display:none">
                                                 <td align="center">Value</td>
-                                                <td align="center">Unit</td>
+                                                <td align="center" style="display:none">Unit</td>
                                             </tr>
 
                                             <tr id="digit_row_2" style="display:none">
                                                 <td align="center">
                                                     <input type="number" id="value" name="value" onkeyup="run_validations_date_digit();">
                                                 </td>
-                                                <td align="center">
+                                                <td align="center" style="display:none">
                                                     <input type="text" id="unit" name="unit" placeholder="years, months etc." onkeyup="run_validations_date_digit();">
                                                 </td>
                                             </tr>
@@ -250,14 +263,9 @@
                                 <div id="rightcolumn">
                                     <h4>AI predicted the answer below <br />(wait for answer to appear below)</h4>
                                     <div class="ai_answer" align="center">
-                                        <input id="ai-answer" type="text" readonly />
-
+                                        <input id="ai-answer" type="text" readonly/>
                                     </div>
-
-
                                 </div>
-
-
                             </div>
 
 
@@ -268,6 +276,8 @@
                                 <button id="next_question" type="button" class="btn-submit" onclick="create_question();">
                                     Add Question
                                 </button>
+                                <div id="error_panel">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -276,7 +286,7 @@
 
                 <div class="bottom_panel">
 
-                    <button id="ready_submit" type="button" class="btn" disabled onclick="final_submit()" onmouseover="check_question_count();">
+                    <button id="ready_submit" type="button" class="btn" onclick="final_submit()" onmouseover="check_question_count();">
                         Ready to Submit HIT
                     </button>
 
@@ -291,17 +301,17 @@
                 </div>
             </div>
         </div>
+        <br />
+        <br />
+        <div id="comment">
+            <textarea type="text" name="feedback" id="feedback" rows="10" cols="20" placeholder="Please leave your feedback here."></textarea>
+        </div>
 
         <div id="generated_answers">
         </div>
-        
+
         <div id="submission" style="display:none">
             <h2>Thank you for helping our research!</h2>
-            <h3>We would really appreciate any feedback you can share as we are doing a pilot for this task currently.</h3>
-        </div>
-        <br />
-        <div id="comment" style="display:none;margin:40px auto;">
-            <input type="text" id="feedback" style="display:block; margin: 0 auto;"/>
         </div>
         <br />
 
