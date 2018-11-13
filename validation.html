@@ -15,25 +15,40 @@
             <a href="collapse" onclick="return collapse();" id="collapse_link"><u>(Click to collapse)</u></a>
             <div class="annotated">
                 <div>
-                   
-                        The task involves answering a question based on the given passage. After answering 
-                        the question please categorize the question into five main categories.
-                        <ul>
-                            <li>Arithmetic - You needed to perform simple addition, subtraction, multiplcation or division to answer the question</li>
-                            <li>Set Overlap or Joins - <i>[TODO: a different name here]</i></li>
-                            <li>Minimum or maximum - You needed to carry out minimum or maximum on a set of numbers to answer the question</li>
-                            <li>Comparison - You needed to perform greater than, smaller than or equal to operator to answer the question</li>
-                            <li>Count - You needed to count some set of events or occurences of an event to answer the question</li>
-                            <li>Other - It fits none of the above category applies</li>
-                        </ul>
-                        You can choose one or more of the above categories for a particular question.
 
-                   
                     <p>
-                        After categorizing the question type, please provide the spans in the passage you think are needed to get the correct answer.
-                        A <b><i>span</i></b> is a continuous phrase taken directly from the passage or question. If you find multiple spans, please drag 
-                        the mouse over the multiple spans one after the other and see the selected text at the bottom in bullet point 4. If you have selected
-                        an incorrect span please use the 'X' button to remove that span. 
+                        This task involves answering a question based on the given passage. We additionally ask you to tell us a few things
+                        about your process for answering the question.
+                    </p>
+
+                    <p>
+                        First, as you are reading the passage, please highlight the parts of the paragraph that are required to answer the
+                        question.  If there are multiple parts, highlight them separately.  Before you begin highlighting, you need to
+                        click the "Click here to Start Highlighting" button, and when you are finished, click on the "Waiting to Finish
+                        Highlighting..." button.  You can remove any text highlighted in error by using the "X" button next to the text in
+                        section 2.
+                    </p>
+
+                    <p>
+                        Second, after you have highlighted the parts of the passage that are required to answer the question, please tell
+                        us what kind of operations are needed to answer the question.  The possible operations include:
+                        <ul>
+                            <li>Addition</li>
+                            <li>Subtraction</li>
+                            <li>Other arithmetic (things like multiplication or division)</li>
+                            <li>Minimum or maximum (finding the largest or smallest thing in a list)</li>
+                            <li>Comparison (finding the greater or lesser of two numbers or dates, or deciding whether two things are equal)</li>
+                            <li>Counting (how many times did something happen, or similar)</li>
+                            <li>Other (I needed to do some complex reasoning, but it doesn't fit any of the above)</li>
+                        </ul>
+                        If you used more than one of these operations to answer the question, select all of them that you used.
+                    </p>
+
+                    <p>
+                        Lastly, after you have provided this information about your process for answering the question, please actually
+                        answer the question.  Answers can be either (1) a date, (2) a number, (3) a span of text from the passage, (4)
+                        multiple spans of text from the passage, or (5) a span of text from the question.  If the answer is a span, copy it
+                        directly from the passage or the question and paste it into the given text box.
                     </p>
                 </div>
                 <div align="left">
@@ -232,13 +247,12 @@
                             3.) Which category does the question belong to?
                             <table id="category_table" cellspacing="10">
                                 <tr>
-                                    <td><input class="category" onclick="validate_submission();" type="checkbox" name="category" value="add_sub">Addition or Subtraction</td>
+                                    <td><input class="category" onclick="validate_submission();" type="checkbox" name="category" value="add">Addition</td>
+                                    <td><input class="category" onclick="validate_submission();" type="checkbox" name="category" value="sub">Subtraction</td>
+                                    <td><input class="category" onclick="validate_submission();" type="checkbox" name="category" value="other_arithmetic">Other Arithmetic</td>
                                     <td><input class="category" onclick="validate_submission();" type="checkbox" name="category" value="max_min">Maximum or Minimum</td>
+                                    <td><input class="category" onclick="validate_submission();" type="checkbox" name="category" value="comparator">Comparison</td>
                                     <td><input class="category" onclick="validate_submission();" type="checkbox" name="category" value="count">Counting</td>
-                                </tr>
-                                <tr>
-                                    <td><input class="category" onclick="validate_submission();" type="checkbox" name="category" value="comparator">Comparsion</td>
-                                    <td><input class="category" onclick="validate_submission();" type="checkbox" name="category" value="overlap">Set Overlap or Joins</td>
                                     <td><input class="category" onclick="validate_submission();" type="checkbox" name="category" value="other">Other</td>
                                 </tr>
                             </table>
