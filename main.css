@@ -25,6 +25,7 @@ h3 {
     font-weight: 400;
     text-align: center;
     margin: 0em
+
 }
 
 h4 {
@@ -66,7 +67,7 @@ h4 {
 .question {
     line-height: 2em;
     font-size: 2em;
-    width: 100%
+    width: 100%;
 }
 
 .panel {
@@ -102,11 +103,12 @@ h4 {
     margin-top: 1em;
 }
 
-.error_panel {
-    float: left;
-    margin-top: 1em;
-    color : brown;
-    font-size: 28px;
+#error_panel {
+    margin-top: 50px;
+    margin-bottom: 20px;
+    color: brown;
+    font-size: 14px;
+    font-weight: bold
 }
 
 /*.horizontal-scroll-wrapper {
@@ -162,43 +164,38 @@ h4 {
 
 .rectangles:hover {
     border: solid darkred;
-    font-weight: bold
 }
 
 .notes-wrapper {
     max-width: 1600px;
-    overflow-y: auto;
+    overflow: hidden;
     display: flex;
 }
 
 .note {
-    min-width: 200px;
+    width: 250px;
     min-height: 30px;
     background-color: #ffa94d;
-    display: block;
     margin: 5px;
-    font-size: 19px;
-    display: inline-block;
+    font-size: 16px;
+    display: inline-flex;
     text-align: center
 }
-
-
 
 .qapairs {
     top: 10px;
     padding: 10px 0px 0px 20px;
 }
 
-.qapairs > div {
-    min-width: 700px;
-    height: 40px;
-    margin: 10px 10px;
-    padding: 0px;
-    background: #cab;
-    font-size: 12px;
-    outline: 1px solid grey;
-
-}
+    .qapairs > div {
+        min-width: 700px;
+        height: 50px;
+        margin: 10px 10px;
+        padding: 0px;
+        background: #f4d641;
+        font-size: 12px;
+        outline: 1px solid grey;
+    }
 
 .btn {
     float: left;
@@ -274,7 +271,7 @@ h4 {
 }
 
 .ans_span1_high {
-    color: red
+    background-color:yellow
 }
 
 .ans_span2 {
@@ -282,7 +279,7 @@ h4 {
 }
 
 .ans_span2_high {
-    color: red
+    background-color: yellow
 }
 
 .ans_span3 {
@@ -290,7 +287,7 @@ h4 {
 }
 
 .ans_span3_high {
-    color: red
+    background-color: yellow
 }
 
 .ans_span4 {
@@ -298,7 +295,7 @@ h4 {
 }
 
 .ans_span4_high {
-    color: red
+    background-color: yellow
 }
 
 .ans_span5 {
@@ -306,7 +303,7 @@ h4 {
 }
 
 .ans_span5_high {
-    color: red
+    background-color: yellow
 }
 
 .ans_span6 {
@@ -314,7 +311,7 @@ h4 {
 }
 
 .ans_span6_high {
-    color: red
+    background-color: yellow
 }
 
 .ans_span7 {
@@ -322,7 +319,7 @@ h4 {
 }
 
 .ans_span7_high {
-    color: red
+    background-color: yellow
 }
 
 .ans_span8 {
@@ -330,7 +327,7 @@ h4 {
 }
 
 .ans_span8_high {
-    color: red
+    background-color: yellow
 }
 
 .ans_span9 {
@@ -338,7 +335,7 @@ h4 {
 }
 
 .ans_span9_high {
-    color: red
+    background-color: yellow
 }
 
 .ans_span10 {
@@ -346,7 +343,7 @@ h4 {
 }
 
 .ans_span10_high {
-    color: red
+    background-color: yellow
 }
 
 .ans_span11 {
@@ -354,7 +351,7 @@ h4 {
 }
 
 .ans_span11_high {
-    color: red
+    background-color: yellow
 }
 
 .ans_span12 {
@@ -362,7 +359,7 @@ h4 {
 }
 
 .ans_span12_high {
-    color: red
+    background-color: yellow
 }
 
 .ans_span13 {
@@ -370,7 +367,7 @@ h4 {
 }
 
 .ans_span13_high {
-    color: red
+    background-color: yellow
 }
 
 .ans_span14 {
@@ -378,7 +375,7 @@ h4 {
 }
 
 .ans_span14_high {
-    color: red
+    background-color: yellow
 }
 
 .ans_span15 {
@@ -386,7 +383,7 @@ h4 {
 }
 
 .ans_span15_high {
-    color: red
+    background-color: yellow
 }
 
 .annotated {
@@ -399,10 +396,10 @@ div {
     padding: 0px 5px;
 }
 
-    textarea {
-        width: 100%;
-        height: 100%
-    }
+textarea {
+    width: 100%;
+    height: 100%
+}
 
 input {
     resize: horizontal;
@@ -458,4 +455,28 @@ a:hover {
     height: 50px;
     min-width: 100px;
     background: darkgray;
+}
+
+::placeholder {
+    font-size: 17px;
+}
+
+#comment {
+    margin: 0 auto;
+    width: 600px;
+    margin-top: 3em
+}
+
+.passage-sample-2 {
+    background-color: lightblue;
+}
+
+#submission_container {
+    margin-left: 45%
+}
+
+#ms-span{
+    font-weight: bold;
+    color: seagreen;
+    background-color: yellow;
 }
